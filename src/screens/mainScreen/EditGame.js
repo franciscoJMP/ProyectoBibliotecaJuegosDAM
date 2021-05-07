@@ -47,6 +47,7 @@ export default function EditGame(props) {
   const {id, gameName} = route.params;
   const [gameInfo, setGameInfo] = useState(null);
   const [imagesSelected, setImagesSelected] = useState(null);
+  const [auxImagesSelected, setAuxImagesSelected] = useState(null);
   const [checkboxes, setCheckBoxes] = useState(null); //checkboxes Categorias
   const [checkboxesP, setcheckboxesP] = useState(null);
   const [gameCategory, setGameCategory] = useState(null);
@@ -66,6 +67,7 @@ export default function EditGame(props) {
     database.child(id).on('value', snapshot => {
       setGameInfo(snapshot.val());
       setImagesSelected(snapshot.val().imagesGames);
+      setAuxImagesSelected(snapshot.val().imagesGames);
     });
   }, []);
 
@@ -238,6 +240,8 @@ export default function EditGame(props) {
         <UploadImage
           imagesSelected={imagesSelected}
           setImagesSelected={setImagesSelected}
+          auxImagesSelected={auxImagesSelected}
+          setAuxImagesSelected={setAuxImagesSelected}
         />
         <FormEditGames
           gameInfo={gameInfo}
@@ -250,6 +254,7 @@ export default function EditGame(props) {
           toastRef={toastRef}
           navigation={navigation}
           imagesSelected={imagesSelected}
+          auxImagesSelected={auxImagesSelected}
         />
       </ScrollView>
     );
@@ -268,6 +273,7 @@ const FormEditGames = props => {
     toastRef,
     navigation,
     imagesSelected,
+    auxImagesSelected,
   } = props;
   const [gameName, setGameName] = useState(gameInfo.gameName);
   const [gameDevelop, setGameDevelop] = useState(gameInfo.gameDevelop);
@@ -369,7 +375,7 @@ const FormEditGames = props => {
   };
 
   const upladImageStorage = async () => {
-    const UrlImages = gameInfo.imagesGames;
+    const UrlImages = auxImagesSelected;
     const Blob = RNFetchBlob.polyfill.Blob;
     const fs = RNFetchBlob.fs;
     window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
@@ -382,7 +388,7 @@ const FormEditGames = props => {
         const imageRef = firebase
           .storage()
           .ref()
-          .child(`juegos/${gameInfo.id}`);
+          .child(`juegos/${uuid.v4()}`);
         let mime = 'image/jpg';
         //Esperamos a que se suban todas las imagenes
 
@@ -500,7 +506,12 @@ const FormEditGames = props => {
 };
 
 const UploadImage = props => {
-  const {imagesSelected, setImagesSelected} = props;
+  const {
+    imagesSelected,
+    setImagesSelected,
+    auxImagesSelected,
+    setAuxImagesSelected,
+  } = props;
 
   const imageSelect = async () => {
     try {
@@ -533,6 +544,16 @@ const UploadImage = props => {
               //Filtra el array devolviendo todas las imagenes menos la seleccionada
               filter(imagesSelected, imageUrl => imageUrl !== image),
             );
+            const aux = filter(
+              auxImagesSelected,
+              imageUrl => imageUrl !== image,
+            );
+            console.log('Aux img', aux);
+            if (size(aux) > 0 || aux) {
+              setAuxImagesSelected(aux);
+            } else {
+              setAuxImagesSelected([]);
+            }
           },
         },
       ],
