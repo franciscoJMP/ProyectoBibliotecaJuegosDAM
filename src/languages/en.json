@@ -1,0 +1,12 @@
+{
+  "game_title": "Games",
+  "search_title": "Search",
+  "library_title": "Library",
+  "account_title": "Account",
+  "input_fail_mesagge": "All fields are required",
+  "email_fail_mesagge": "Invalid Email",
+  "password_fail_mesagge": "The password must have at least 6 characters, numbers and capital letters",
+  "repeat_password_fail": "Passwords do not match",
+  "email_exits": "Este correo ya esta en uso",
+  "error_login": "The email or password is incorrect"
+}

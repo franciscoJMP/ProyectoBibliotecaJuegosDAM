@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "338313711627",
+    "firebase_url": "https://proyectovideojuegos-34028-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "proyectovideojuegos-34028",
+    "storage_bucket": "proyectovideojuegos-34028.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:338313711627:android:cb781dfa06b8c67468b70e",
+        "android_client_info": {
+          "package_name": "com.proyectovideojuegos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "338313711627-km9knpodf4rg52cgjku8lk74k54ms5o5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.proyectovideojuegos",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "338313711627-5rrfvr5v9spqmu7bh0gh0jqig2m9m81b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBW0LZEh-VWhrzEXn4dIHmCORqYSAMd1EM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "338313711627-5rrfvr5v9spqmu7bh0gh0jqig2m9m81b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

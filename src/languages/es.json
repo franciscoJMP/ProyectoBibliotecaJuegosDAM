@@ -1,0 +1,12 @@
+{
+  "game_title": "Juegos",
+  "search_title": "Buscar",
+  "library_title": "Biblioteca",
+  "account_title": "Cuenta",
+  "input_fail_mesagge": "Todos los campos son obligatorios",
+  "email_fail_mesagge": "La dirección de correo no es valida",
+  "password_fail_mesagge": "La contraseña debe tener almenos 6 caracteres numeros y mayusculas",
+  "repeat_password_fail": "Las contraseñas no coinciden",
+  "email_exits": "Este correo ya esta en uso",
+  "error_login": "El correo o la contraseña son incorrectos"
+}
