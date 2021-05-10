@@ -1,6 +1,5 @@
 import React, {useState, useRef} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {Icon} from 'react-native-elements';
 import Toast from 'react-native-easy-toast';
 import {
   LoadingComponent,
