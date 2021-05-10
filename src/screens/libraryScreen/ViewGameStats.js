@@ -157,8 +157,16 @@ const TitleGame = props => {
 
 const GameInfo = props => {
   const {gameInfo, age} = props;
-  const {gameYear, gameDevelop, mainPlusExtra, mainStory, rating} = gameInfo;
-
+  const {
+    gameYear,
+    gameDevelop,
+    mainPlusExtra,
+    mainStory,
+    rating,
+    createdBy,
+  } = gameInfo;
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const user = firebase.auth().currentUser.uid;
   let imgAge;
   switch (age) {
     case '3':
@@ -192,6 +200,15 @@ const GameInfo = props => {
         }}>
         <Image source={imgAge} resizeMode="contain" style={styles.logo} />
       </View>
+      {createdBy === user && (
+        <Button
+          title="Editar"
+          onPress={() => {
+            console.log('Hola');
+          }}
+          disabled={isButtonDisabled}
+          buttonStyle={styles.btnAddGame}></Button>
+      )}
     </View>
   );
 };

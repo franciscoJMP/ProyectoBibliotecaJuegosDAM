@@ -64,7 +64,7 @@ export default function ListReviewComponent(props) {
 const Review = props => {
   const {title, review, rating, createAt, avatarUser} = props.review;
   const date = new Date(createAt);
-  const createReview = moment(date).format('DD/MM/YYY-HH:mm');
+  const createReview = moment(date).format('DD/MM/YYYY-HH:mm');
 
   return (
     <View style={styles.viewReview}>

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   StyleSheet,
   View,
@@ -20,9 +20,10 @@ import {
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 import DropDownPicker from 'react-native-dropdown-picker';
+import Toast from 'react-native-easy-toast';
 import {List} from 'react-native-paper';
 import uuid from 'react-native-uuid';
-import {map, size, filter} from 'lodash';
+import {map, size, filter, set} from 'lodash';
 import * as firebase from 'firebase';
 import 'firebase/storage';
 import 'firebase/database';
@@ -35,8 +36,6 @@ import {
   LoadingComponent,
   ModalComponent,
 } from 'ProyectoVideoJuegos/src/components';
-import AddGameCategory from './AddGameCategory';
-import AddGamePlatform from './AddGamePlatform';
 
 LogBox.ignoreAllLogs();
 const database = firebase.database();
@@ -44,8 +43,9 @@ const database = firebase.database();
 //Constante para el tamaño de la pantalla
 const widthScreen = Dimensions.get('window').width;
 
-export default function AddGamesComponentForm(props) {
-  const {toastRef, setIsLoading, navigation} = props;
+export default function AddPersonalGame(props) {
+  const {navigation} = props;
+
   //useStates
   const [gameName, setGameName] = useState('');
   const [gameDevelop, setGameDevelop] = useState('');
@@ -62,7 +62,8 @@ export default function AddGamesComponentForm(props) {
   const [showModal, setShowModal] = useState(false);
   const [renderComponent, setRenderComponent] = useState(null);
   const [isVisibleDatePicker, setIsVisibleDatePicker] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
+  const toastRef = useRef();
   useEffect(() => {
     loadGameCategory();
 
@@ -209,9 +210,10 @@ export default function AddGamesComponentForm(props) {
       setIsLoading(true);
       //Esta funcion nos devuelve una promesa con las URL de todas las imagenes
       upladImageStorage().then(response => {
+        const idGame = uuid.v4();
         const userId = firebase.auth().currentUser.uid;
         const gameData = {
-          id: uuid.v4(),
+          id: idGame,
           gameName: gameName,
           gameDevelop: gameDevelop,
           gameDescription: gameDescription,
@@ -227,7 +229,7 @@ export default function AddGamesComponentForm(props) {
           gameCategory: arrayCategories,
           gamePlatform: arrayPlatforms,
           imagesGames: response,
-          visibility: 'public',
+          visibility: 'private',
           createdBy: userId,
         };
         database
@@ -235,8 +237,25 @@ export default function AddGamesComponentForm(props) {
           .child(gameData.id)
           .set(gameData)
           .then(() => {
-            setIsLoading(false);
-            navigation.goBack();
+            const payload = {
+              idUser: userId,
+              idGame: idGame,
+              mainHours: '',
+              plusExtra: '',
+              fullHours: '',
+              price: '',
+              gameState: '',
+              gamePlatform: '',
+            };
+            firebase
+              .database()
+              .ref('Bibliotecas')
+              .child(userId)
+              .push(payload)
+              .then(() => {
+                setIsLoading(false);
+                navigation.goBack();
+              });
           });
       });
     }
@@ -320,7 +339,9 @@ export default function AddGamesComponentForm(props) {
         expandedP={expandedP}
         setExpandedP={setExpandedP}
         checkboxes={checkboxes}
+        setCheckBoxes={setCheckBoxes}
         checkboxesP={checkboxesP}
+        setcheckboxesP={setcheckboxesP}
         toggleCheckbox={toggleCheckbox}
         toggleCheckboxP={toggleCheckboxP}
         showModal={showModal}
@@ -343,6 +364,8 @@ export default function AddGamesComponentForm(props) {
         title="Crear Juego"
         onPress={addGame}
         buttonStyle={styles.btnAddGame}></Button>
+      <Toast ref={toastRef} position="bottom" opacity={0.9} />
+      <LoadingComponent isVisible={isLoading} text="Creando Juego" />
     </ScrollView>
   );
 }
@@ -374,7 +397,9 @@ const FormAdd = props => {
     setExpanded,
     setExpandedP,
     checkboxes,
+    setCheckBoxes,
     checkboxesP,
+    setcheckboxesP,
     toggleCheckbox,
     toggleCheckboxP,
     showModal,
@@ -395,7 +420,8 @@ const FormAdd = props => {
       case 'p':
         setRenderComponent(
           <AddGamePlatform
-            gamePlatform={gamePlatform}
+            checkboxesP={checkboxesP}
+            setcheckboxesP={setcheckboxesP}
             setShowModal={setShowModal}
             toastRef={toastRef}
           />,
@@ -405,7 +431,8 @@ const FormAdd = props => {
       case 'c':
         setRenderComponent(
           <AddGameCategory
-            gameCategory={gameCategory}
+            checkboxes={checkboxes}
+            setCheckBoxes={setCheckBoxes}
             setShowModal={setShowModal}
             toastRef={toastRef}
           />,
@@ -587,6 +614,91 @@ const CheckBoxes = props => {
     </View>
   );
 };
+const AddGamePlatform = props => {
+  const {setShowModal, checkboxesP, setcheckboxesP} = props;
+  const [newPlatform, setNewPlatform] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const onSubmit = () => {
+    setError(null);
+    if (!newPlatform) {
+      setError('La plataforma no puede estar vacia');
+    } else {
+      setIsLoading(true);
+      const auxCheckboxes = checkboxesP;
+      const obj = {
+        checked: false,
+        id: checkboxesP[checkboxesP.length - 1].id + 1,
+        title: newPlatform,
+      };
+      auxCheckboxes.push(obj);
+      setcheckboxesP(auxCheckboxes);
+      setIsLoading(false);
+      setShowModal(false);
+    }
+  };
+  return (
+    <View style={styles.view}>
+      <Input
+        placeholder="Plataforma"
+        defaultValue={newPlatform && newPlatform}
+        containerStyle={styles.input}
+        onChange={e => setNewPlatform(e.nativeEvent.text)}
+        errorMessage={error}
+      />
+      <Button
+        title="Añadir"
+        containerStyle={styles.btnContainer}
+        buttonStyle={styles.btn}
+        onPress={onSubmit}
+        loading={isLoading}
+      />
+    </View>
+  );
+};
+const AddGameCategory = props => {
+  const {setShowModal, checkboxes, setCheckBoxes} = props;
+  const [newCategory, setNewCategory] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const onSubmit = () => {
+    setError(null);
+    if (!newCategory) {
+      setError('La categoria no puede estar vacia');
+    } else {
+      setIsLoading(true);
+      const auxCheckboxes = checkboxes;
+      const obj = {
+        checked: false,
+        id: checkboxes[checkboxes.length - 1].id + 1,
+        title: newCategory,
+      };
+      auxCheckboxes.push(obj);
+      setCheckBoxes(auxCheckboxes);
+      setIsLoading(false);
+      setShowModal(false);
+    }
+  };
+
+  return (
+    <View style={styles.view}>
+      <Input
+        placeholder="Categoria"
+        defaultValue={newCategory && newCategory}
+        containerStyle={styles.input}
+        onChange={e => setNewCategory(e.nativeEvent.text)}
+        errorMessage={error}
+      />
+      <Button
+        title="Añadir"
+        containerStyle={styles.btnContainer}
+        buttonStyle={styles.btn}
+        onPress={onSubmit}
+        loading={isLoading}
+      />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -595,6 +707,11 @@ const styles = StyleSheet.create({
   viewForm: {
     marginLeft: 10,
     marginRight: 10,
+  },
+  view: {
+    alignItems: 'center',
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   input: {
     marginBottom: 10,
@@ -651,5 +768,12 @@ const styles = StyleSheet.create({
   },
   textDate: {
     fontSize: 18,
+  },
+  btnContainer: {
+    marginTop: 20,
+    width: '95%',
+  },
+  btn: {
+    backgroundColor: colors.primary,
   },
 });

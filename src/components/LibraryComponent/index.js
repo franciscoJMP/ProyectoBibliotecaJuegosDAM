@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useCallback} from 'react';
+import React, {useState, useEffect, useRef, useCallback, Fragment} from 'react';
 import {
   StyleSheet,
   Text,
@@ -125,6 +125,15 @@ export default function LibraryComponent(props) {
           <Text style={{textAlign: 'center'}}>Cargando Juegos...</Text>
         </View>
       )}
+      <Fragment>
+        <Icon
+          type="material-community"
+          name="plus"
+          color={colors.primary}
+          reverse
+          containerStyle={styles.btnContainer}
+          onPress={() => navigation.navigate('addpersonalgame')}></Icon>
+      </Fragment>
       <Toast ref={toastRef} position="center" opacity={0.9} />
       <LoadingComponent text="Eliminando juego" isVisible={isLoading} />
     </View>
@@ -192,7 +201,6 @@ const Game = props => {
           }
         />
         <View style={styles.infoGame}>
-          <Text style={styles.gameName}>{gameName}</Text>
           <Icon
             type="material-community"
             name="minus-circle"
@@ -202,6 +210,7 @@ const Game = props => {
             containerStyle={styles.libraryIcon}
             underlayColor="transparent"
           />
+          <Text style={styles.gameName}>{gameName}</Text>
         </View>
       </TouchableOpacity>
     </View>
@@ -226,8 +235,8 @@ const styles = StyleSheet.create({
   },
   infoGame: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
     flexDirection: 'row',
     paddingLeft: 20,
     paddingRight: 20,
@@ -239,14 +248,23 @@ const styles = StyleSheet.create({
   gameName: {
     fontWeight: 'bold',
     fontSize: 25,
+    marginLeft: 20,
+    width: '90%',
   },
-  libraryIcon: {
-    marginTop: -35,
+  libraryIcon: {    
     backgroundColor: '#fff',
     padding: 5,
     borderRadius: 100,
   },
   searchBar: {
     marginBottom: 200,
+  },
+  btnContainer: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    shadowColor: 'black',
+    shadowOffset: {width: 2, height: 2},
+    shadowOpacity: 0.5,
   },
 });

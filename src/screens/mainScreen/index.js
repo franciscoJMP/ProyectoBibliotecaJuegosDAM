@@ -54,7 +54,11 @@ export default function MainScreen(props) {
   useFocusEffect(
     useCallback(() => {
       database.on('value', snapshot => {
-        setTotalGamesList(snapshot.numChildren());
+        let i = 0;
+        snapshot.forEach(children => {
+          if (children.val().visibility === 'public') i++;
+        });
+        setTotalGamesList(i);
       });
       downloadContent();
 
@@ -73,19 +77,28 @@ export default function MainScreen(props) {
       .orderByChild('id')
       .limitToFirst(limitsGames)
       .on('value', snapshot => {
+        var x = 1;
         var i = 1;
+        snapshot.forEach(children => {
+          if (children.val().visibility === 'public') x++;
+        });
+
         snapshot.forEach(childSnapshot => {
           let game = childSnapshot.val();
 
-          resultGames.push(game);
-          if (i === snapshot.numChildren()) {
+          if (game.visibility === 'public') {
+            resultGames.push(game);
+            i++;
+          }
+          if (i === x) {
             setStartGames(childSnapshot);
           }
-          i++;
         });
         setGamesList(resultGames);
       });
   };
+
+  
 
   const handleLoadMore = () => {
     const resultGames = [];
@@ -102,7 +115,8 @@ export default function MainScreen(props) {
             snapshot.forEach(childSnapshot => {
               if (i > 0) {
                 let game = childSnapshot.val();
-                resultGames.push(game);
+                if (game.visibility === 'public') resultGames.push(game);
+
                 if (i === snapshot.numChildren() - 1) {
                   setStartGames(childSnapshot);
                 }

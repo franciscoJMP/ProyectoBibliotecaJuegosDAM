@@ -15,6 +15,7 @@ import ViewGameInfo from 'ProyectoVideoJuegos/src/screens/mainScreen/ViewGameInf
 import AddReviewGame from 'ProyectoVideoJuegos/src/screens/mainScreen/AddReviewGame';
 import AdministrateUsers from 'ProyectoVideoJuegos/src/screens/accountScreen/AdministrateUsers';
 import ViewGameStats from 'ProyectoVideoJuegos/src/screens/libraryScreen/ViewGameStats';
+import AddPersonalGame from 'ProyectoVideoJuegos/src/screens/libraryScreen/AddPersonalGame';
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
 import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
 var texts = setI18nConfig();
@@ -54,7 +55,7 @@ function MainStack() {
         name="addreviewgame"
         component={AddReviewGame}
         options={{title: 'Nuevo Comentario'}}></Stack.Screen>
-        <Stack.Screen name="editgame" component={EditGame}></Stack.Screen>
+      <Stack.Screen name="editgame" component={EditGame}></Stack.Screen>
     </Stack.Navigator>
   );
 }
@@ -122,6 +123,10 @@ function LibraryStack() {
       <Stack.Screen
         name="viewgamestats"
         component={ViewGameStats}></Stack.Screen>
+      <Stack.Screen
+        options={{title: 'Añadir Juego'}}
+        name="addpersonalgame"
+        component={AddPersonalGame}></Stack.Screen>
     </Stack.Navigator>
   );
 }

@@ -352,7 +352,7 @@ const FormEditGames = props => {
       setIsLoading(true);
       //Esta funcion nos devuelve una promesa con las URL de todas las imagenes
       upladImageStorage().then(response => {
-        console.log('Response IMG ', response);
+        const userId = firebase.auth().currentUser.uid;
         const gameData = {
           gameName: gameName,
           gameDevelop: gameDevelop,
@@ -362,6 +362,7 @@ const FormEditGames = props => {
           gameCategory: arrayCategories,
           gamePlatform: arrayPlatforms,
           imagesGames: response,
+          createdBy: userId,
         };
         database
           .child(gameInfo.id)
@@ -385,10 +386,7 @@ const FormEditGames = props => {
       map(imagesSelected, async image => {
         const imagePath = image;
         let uploadBlob = null;
-        const imageRef = firebase
-          .storage()
-          .ref()
-          .child(`juegos/${uuid.v4()}`);
+        const imageRef = firebase.storage().ref().child(`juegos/${uuid.v4()}`);
         let mime = 'image/jpg';
         //Esperamos a que se suban todas las imagenes
 
@@ -409,7 +407,7 @@ const FormEditGames = props => {
             UrlImages.push(url);
           })
           .catch(error => {
-            console.log(error);
+            if (__DEV__) console.log(error);
           });
       }),
     );
