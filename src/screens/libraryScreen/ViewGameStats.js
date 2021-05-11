@@ -225,7 +225,7 @@ const GameInfo = props => {
         }}>
         <Image source={imgAge} resizeMode="contain" style={styles.logo} />
       </View>
-      {createdBy === user && userType !== 'admin' && (
+      {createdBy === user && (
         <Button
           title="Editar"
           onPress={() => {
