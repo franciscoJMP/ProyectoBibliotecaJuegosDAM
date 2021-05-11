@@ -20,7 +20,6 @@ export default function ListGames(props) {
   const {
     gamesList,
     userInfo,
-    totalGamesList,
     handleLoadMore,
     isLoading,
   } = props;
@@ -58,8 +57,6 @@ const GamesRender = props => {
     gameName,
     gameDevelop,
     gameDescription,
-    gameYear,
-
     imagesGames,
   } = game.item;
   const imageGame = imagesGames[0];

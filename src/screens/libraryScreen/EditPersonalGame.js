@@ -36,13 +36,11 @@ import {
   CarouselComponent,
 } from 'ProyectoVideoJuegos/src/components';
 import {items} from '../../components/AddGamesComponentForm/ageItems';
-import AddGameCategory from '../../components/AddGamesComponentForm/AddGameCategory';
-import AddGamePlatform from '../../components/AddGamesComponentForm/AddGamePlatform';
 
 const database = firebase.database().ref('Juegos');
 const screenWidth = Dimensions.get('window').width;
 
-export default function EditGame(props) {
+export default function EditPersonalGame(props) {
   const {navigation, route} = props;
   const {id, gameName} = route.params;
   const [gameInfo, setGameInfo] = useState(null);
@@ -65,9 +63,11 @@ export default function EditGame(props) {
       },
     });
     database.child(id).on('value', snapshot => {
-      setGameInfo(snapshot.val());
-      setImagesSelected(snapshot.val().imagesGames);
-      setAuxImagesSelected(snapshot.val().imagesGames);
+      if (snapshot.exists()) {
+        setGameInfo(snapshot.val());
+        setImagesSelected(snapshot.val().imagesGames);
+        setAuxImagesSelected(snapshot.val().imagesGames);
+      }
     });
   }, []);
 
@@ -246,7 +246,9 @@ export default function EditGame(props) {
         <FormEditGames
           gameInfo={gameInfo}
           checkboxes={checkboxes}
+          setCheckBoxes={setCheckBoxes}
           checkboxesP={checkboxesP}
+          setcheckboxesP={setcheckboxesP}
           gamePlatform={gamePlatform}
           gameCategory={gameCategory}
           toggleCheckbox={toggleCheckbox}
@@ -265,7 +267,9 @@ const FormEditGames = props => {
   const {
     gameInfo,
     checkboxes,
+    setCheckBoxes,
     checkboxesP,
+    setcheckboxesP,
     toggleCheckbox,
     toggleCheckboxP,
     gamePlatform,
@@ -305,7 +309,8 @@ const FormEditGames = props => {
       case 'p':
         setRenderComponent(
           <AddGamePlatform
-            gamePlatform={gamePlatform}
+            checkboxesP={checkboxesP}
+            setcheckboxesP={setcheckboxesP}
             setShowModal={setShowModal}
             toastRef={toastRef}
           />,
@@ -315,7 +320,8 @@ const FormEditGames = props => {
       case 'c':
         setRenderComponent(
           <AddGameCategory
-            gameCategory={gameCategory}
+            checkboxes={checkboxes}
+            setCheckBoxes={setCheckBoxes}
             setShowModal={setShowModal}
             toastRef={toastRef}
           />,
@@ -604,6 +610,92 @@ const CheckBoxes = props => {
   );
 };
 
+const AddGamePlatform = props => {
+  const {setShowModal, checkboxesP, setcheckboxesP} = props;
+  const [newPlatform, setNewPlatform] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const onSubmit = () => {
+    setError(null);
+    if (!newPlatform) {
+      setError('La plataforma no puede estar vacia');
+    } else {
+      setIsLoading(true);
+      const auxCheckboxes = checkboxesP;
+      const obj = {
+        checked: false,
+        id: checkboxesP[checkboxesP.length - 1].id + 1,
+        title: newPlatform,
+      };
+      auxCheckboxes.push(obj);
+      setcheckboxesP(auxCheckboxes);
+      setIsLoading(false);
+      setShowModal(false);
+    }
+  };
+  return (
+    <View style={styles.view}>
+      <Input
+        placeholder="Plataforma"
+        defaultValue={newPlatform && newPlatform}
+        containerStyle={styles.input}
+        onChange={e => setNewPlatform(e.nativeEvent.text)}
+        errorMessage={error}
+      />
+      <Button
+        title="Añadir"
+        containerStyle={styles.btnContainer}
+        buttonStyle={styles.btn}
+        onPress={onSubmit}
+        loading={isLoading}
+      />
+    </View>
+  );
+};
+const AddGameCategory = props => {
+  const {setShowModal, checkboxes, setCheckBoxes} = props;
+  const [newCategory, setNewCategory] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const onSubmit = () => {
+    setError(null);
+    if (!newCategory) {
+      setError('La categoria no puede estar vacia');
+    } else {
+      setIsLoading(true);
+      const auxCheckboxes = checkboxes;
+      const obj = {
+        checked: false,
+        id: checkboxes[checkboxes.length - 1].id + 1,
+        title: newCategory,
+      };
+      auxCheckboxes.push(obj);
+      setCheckBoxes(auxCheckboxes);
+      setIsLoading(false);
+      setShowModal(false);
+    }
+  };
+
+  return (
+    <View style={styles.view}>
+      <Input
+        placeholder="Categoria"
+        defaultValue={newCategory && newCategory}
+        containerStyle={styles.input}
+        onChange={e => setNewCategory(e.nativeEvent.text)}
+        errorMessage={error}
+      />
+      <Button
+        title="Añadir"
+        containerStyle={styles.btnContainer}
+        buttonStyle={styles.btn}
+        onPress={onSubmit}
+        loading={isLoading}
+      />
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   scrollView: {
     height: '100%',
@@ -611,6 +703,11 @@ const styles = StyleSheet.create({
   viewForm: {
     marginLeft: 10,
     marginRight: 10,
+  },
+  view: {
+    alignItems: 'center',
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   input: {
     marginBottom: 10,
@@ -668,5 +765,12 @@ const styles = StyleSheet.create({
   },
   textDate: {
     fontSize: 18,
+  },
+  btnContainer: {
+    marginTop: 20,
+    width: '95%',
+  },
+  btn: {
+    backgroundColor: colors.primary,
   },
 });

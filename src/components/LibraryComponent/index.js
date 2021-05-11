@@ -21,15 +21,17 @@ import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
 
 const bibliotecasDB = firebase.database().ref('Bibliotecas');
 const juegosDB = firebase.database().ref('Juegos');
+const usuariosDB = firebase.database().ref('Usuarios');
 
 export default function LibraryComponent(props) {
   const [games, setGames] = useState(null);
   const [savesGames, setSavesGames] = useState(null);
   const [userLogged, setUserLogged] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+  const [search, setSearch] = useState('');
   const toastRef = useRef();
   const navigation = useNavigation();
-  const [search, setSearch] = useState('');
 
   firebase.auth().onAuthStateChanged(user => {
     user ? setUserLogged(true) : setUserLogged(false);
@@ -47,6 +49,9 @@ export default function LibraryComponent(props) {
           getDataGames(idGames).then(response => {
             setGames(response);
           });
+        });
+        usuariosDB.child(idUser).on('value', snapshot => {
+          setUserInfo(snapshot.val());
         });
       }
     }, [userLogged]),
@@ -96,7 +101,13 @@ export default function LibraryComponent(props) {
   };
 
   if (games?.length === 0) {
-    return <NotFoundGames />;
+    return (
+      <Fragment>
+        <NotFoundGames navigation={navigation} />
+        <Toast ref={toastRef} position="center" opacity={0.9} />
+        <LoadingComponent text="Eliminando juego" isVisible={isLoading} />
+      </Fragment>
+    );
   }
   return (
     <View style={styles.viewBody}>
@@ -106,12 +117,13 @@ export default function LibraryComponent(props) {
         value={search}
         containerStyle={StyleSheet.searchBar}
       />
-      {games ? (
+      {games && userInfo ? (
         <FlatList
           data={savesGames ? savesGames : games}
           renderItem={game => (
             <Game
               game={game}
+              userInfo={userInfo}
               setIsLoading={setIsLoading}
               toastRef={toastRef}
               navigation={navigation}
@@ -139,21 +151,31 @@ export default function LibraryComponent(props) {
     </View>
   );
 }
-const NotFoundGames = () => {
+const NotFoundGames = props => {
+  const {navigation} = props;
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <Icon type="material-community" name="alert-outline" size={50} />
       <Text style={{fontSize: 20, fontWeight: 'bold'}}>
         No tienes juegos agregados
       </Text>
+      <Fragment>
+        <Icon
+          type="material-community"
+          name="plus"
+          color={colors.primary}
+          reverse
+          containerStyle={styles.btnContainer}
+          onPress={() => navigation.navigate('addpersonalgame')}></Icon>
+      </Fragment>
     </View>
   );
 };
 
 const Game = props => {
-  const {game, setIsLoading, toastRef, navigation} = props;
-  const {gameName, imagesGames, key, id} = game.item;
-
+  const {game, setIsLoading, toastRef, navigation, userInfo} = props;
+  const {gameName, imagesGames, key, id, createdBy} = game.item;
+  const {uid} = userInfo;
   const confirmRemoveLibrary = () => {
     Alert.alert(
       'Eliminar Juego de la biblioteca',
@@ -175,8 +197,18 @@ const Game = props => {
               .child(key)
               .remove()
               .then(() => {
-                setIsLoading(false);
-                toastRef.current.show('Juego eliminado con exito');
+                if (createdBy === uid) {
+                  juegosDB
+                    .child(id)
+                    .remove()
+                    .then(() => {
+                      setIsLoading(false);
+                      toastRef.current.show('Juego eliminado con exito');
+                    });
+                } else {
+                  setIsLoading(false);
+                  toastRef.current.show('Juego eliminado con exito');
+                }
               });
           },
         },
@@ -251,7 +283,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     width: '90%',
   },
-  libraryIcon: {    
+  libraryIcon: {
     backgroundColor: '#fff',
     padding: 5,
     borderRadius: 100,

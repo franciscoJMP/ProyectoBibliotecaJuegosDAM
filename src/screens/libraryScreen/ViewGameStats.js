@@ -30,10 +30,10 @@ import {
   ChangePrice,
 } from 'ProyectoVideoJuegos/src/components/ChangeGamesStats';
 import {items} from './items';
-import {reject} from 'lodash';
 
 const juegosDB = firebase.database().ref('Juegos');
 const bibliotecasDB = firebase.database().ref('Bibliotecas');
+const usuariosDB = firebase.database().ref('Usuarios');
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -43,6 +43,7 @@ export default function ViewGameStats(props) {
 
   const [gameInfo, setGameInfo] = useState(null);
   const [gamesLibraryInfo, setGamesLibraryInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
   const [expandedInfo, setExpandedInfo] = useState(false); //Expandir acordeon de Informacion General
   const [expandedPersonalInfo, setExpandedPersonalInfo] = useState(false); //Expandir acordeon de informacion Personal
   const [showModal, setShowModal] = useState(false);
@@ -71,7 +72,21 @@ export default function ViewGameStats(props) {
       .on('value', snapshot => {
         setGamesLibraryInfo(snapshot.val());
       });
+    usuariosDB.child(user).on('value', snapshot => {
+      setUserInfo(snapshot.val());
+    });
   }, []);
+
+  useEffect(() => {
+    if (gameInfo) {
+      navigation.setOptions({
+        title: truncateTitle(gameInfo.gameName, 20),
+        headerTitleStyle: {
+          width: screenWidth,
+        },
+      });
+    }
+  }, [gameInfo]);
 
   const handlePressGeneralInfo = () => setExpandedInfo(!expandedInfo);
   const handlePressPersonalInfo = () =>
@@ -88,7 +103,7 @@ export default function ViewGameStats(props) {
     setShowModal(true);
   };
 
-  if (!gameInfo || !gamesLibraryInfo)
+  if (!gameInfo || !gamesLibraryInfo || !userInfo)
     return <LoadingComponent isVisible={true} text="Cargando..." />;
   return (
     <ScrollView vertical style={styles.viewBody}>
@@ -106,7 +121,12 @@ export default function ViewGameStats(props) {
         title="Información General"
         expanded={expandedInfo}
         onPress={handlePressGeneralInfo}>
-        <GameInfo gameInfo={gameInfo} age={gameInfo.age} />
+        <GameInfo
+          gameInfo={gameInfo}
+          age={gameInfo.age}
+          userInfo={userInfo}
+          navigation={navigation}
+        />
       </List.Accordion>
 
       <List.Accordion
@@ -156,7 +176,7 @@ const TitleGame = props => {
 };
 
 const GameInfo = props => {
-  const {gameInfo, age} = props;
+  const {gameInfo, age, userInfo, navigation} = props;
   const {
     gameYear,
     gameDevelop,
@@ -164,7 +184,10 @@ const GameInfo = props => {
     mainStory,
     rating,
     createdBy,
+    gameName,
+    id,
   } = gameInfo;
+  const {userType} = userInfo;
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const user = firebase.auth().currentUser.uid;
   let imgAge;
@@ -191,7 +214,9 @@ const GameInfo = props => {
       <Text style={styles.infosText}>Fecha de salida: {gameYear}</Text>
       <Text style={styles.infosText}>Historia Principal: {mainStory}</Text>
       <Text style={styles.infosText}>Completar el 100%: {mainPlusExtra}</Text>
-      <Text style={styles.infosText}>Nota Media: {rating}/5</Text>
+      {createdBy !== user && (
+        <Text style={styles.infosText}>Nota Media: {rating}/5</Text>
+      )}
       <View
         style={{
           flexDirection: 'row',
@@ -200,11 +225,14 @@ const GameInfo = props => {
         }}>
         <Image source={imgAge} resizeMode="contain" style={styles.logo} />
       </View>
-      {createdBy === user && (
+      {createdBy === user && userType !== 'admin' && (
         <Button
           title="Editar"
           onPress={() => {
-            console.log('Hola');
+            navigation.navigate('editpersonalgame', {
+              id: id,
+              gameName: gameName,
+            });
           }}
           disabled={isButtonDisabled}
           buttonStyle={styles.btnAddGame}></Button>
