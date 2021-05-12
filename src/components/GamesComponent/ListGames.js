@@ -165,7 +165,7 @@ const GamesRender = props => {
           <Text style={styles.gameDescriptionStyle}>
             {gameDescription.substr(0, 60)}...
           </Text>
-          {userType && userType === 'admin' && (
+          {userType && userType !== 'normal' && (
             <View style={{flexDirection: 'row'}}>
               <Icon
                 type="material-community"

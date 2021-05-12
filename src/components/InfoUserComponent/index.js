@@ -88,6 +88,25 @@ export default function InfoUserComponent(props) {
         console.log('Error');
       });
   };
+  const userTextStyleFunction = () => {
+    let style;
+    if (user) {
+      const type = user.userType;
+      switch (type) {
+        case 'normal':
+          style = styles.displayName;
+          break;
+        case 'moderator':
+          style = styles.displayNameModerator;
+          break;
+        case 'admin':
+          style = styles.displayNameAdmin;
+          break;
+      }
+    }
+    return style;
+  };
+  const userTextStyle = userTextStyleFunction();
 
   return (
     <View style={styles.viewUserInfo}>
@@ -106,14 +125,7 @@ export default function InfoUserComponent(props) {
       <View>
         {user ? (
           <Fragment>
-            <Text
-              style={
-                user.userType === 'normal'
-                  ? styles.displayName
-                  : styles.displayNameAdmin
-              }>
-              {user.name}
-            </Text>
+            <Text style={userTextStyle}>{user.name}</Text>
             <Text>{user.email}</Text>
             <Text>{user.phone ? user.phone : 'Sin Telefono'}</Text>
           </Fragment>
@@ -144,5 +156,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingBottom: 5,
     color: '#F50606',
+  },
+  displayNameModerator: {
+    fontWeight: 'bold',
+    paddingBottom: 5,
+    color: colors.primary,
   },
 });

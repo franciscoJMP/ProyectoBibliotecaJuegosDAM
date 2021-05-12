@@ -1,5 +1,11 @@
 import React, {Component, useState, useEffect, useRef, Fragment} from 'react';
-import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  ScrollView,
+} from 'react-native';
 import {Button} from 'react-native-elements';
 import Toast from 'react-native-easy-toast';
 import * as firebase from 'firebase';
@@ -20,7 +26,7 @@ export default function UserProfileComponent(props) {
     })();
   }, []);
   return (
-    <View style={styles.viewUserInfo}>
+    <ScrollView style={styles.viewUserInfo}>
       {userInfo ? (
         <Fragment>
           <InfoUserComponent
@@ -41,9 +47,9 @@ export default function UserProfileComponent(props) {
         titleStyle={styles.btCloseSessionText}
         onPress={() => firebase.auth().signOut()}
       />
-      <Toast ref={toastRef} position="center" opacity={0.9}/>
+      <Toast ref={toastRef} position="center" opacity={0.9} />
       <LoadingComponent isVisible={loading} text={loadingText} />
-    </View>
+    </ScrollView>
   );
 }
 const styles = StyleSheet.create({
@@ -52,7 +58,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroudContent,
   },
   btnCloseSession: {
-    marginTop: 30,
+    marginTop: 10,
     borderRadius: 0,
     backgroundColor: colors.primaryTextContrast,
     borderTopWidth: 1,

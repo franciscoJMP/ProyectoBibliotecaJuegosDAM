@@ -32,7 +32,7 @@ export default function ControllerComponent(props) {
         userInfo={user}
         isLoading={isLoading}
       />
-      {user.userType === 'admin' && <AdminOptions />}
+      {user.userType !== 'normal' && <AdminOptions />}
     </Fragment>
   ) : (
     <ActivityIndicator size="large" color="#1251E1" />

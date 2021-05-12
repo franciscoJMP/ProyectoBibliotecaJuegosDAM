@@ -39,10 +39,11 @@ export default function SocialLoginComponent() {
             provider: 'google',
             userType: 'normal',
             photoURL: user.photoURL,
+            sendSolicitude: false,
+            keySolicitude: '',
           });
         }
       });
-      
 
       setLoading(false);
       navigation.goBack();

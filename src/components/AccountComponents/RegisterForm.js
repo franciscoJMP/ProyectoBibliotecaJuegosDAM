@@ -54,6 +54,8 @@ export default function RegisterForm(props) {
             provider: 'authfirebase',
             userType: 'normal',
             photoURL: '',
+            sendSolicitude: false,
+            keySolicitude: '',
           });
           setLoading(false);
           navigation.navigate('accountstack');
