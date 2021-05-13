@@ -16,6 +16,6 @@ export default function AccountScreen(props) {
     });
   }, []);
   if (login === null)
-    return <LoadingComponent isVisible={true} text="cargando..." />;
+    return <LoadingComponent isVisible={true} text="Cargando..." />;
   return login ? <UserLogger type="account" /> : <UserGuest title={titleGuestAccount} text={textGuestAccount} />;
 }

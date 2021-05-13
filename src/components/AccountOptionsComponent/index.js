@@ -80,6 +80,9 @@ export default function AccountOptionsComponent(props) {
       case 'cancelsolicitude':
         cancelSolicitude();
         break;
+      case 'viewrequest':
+        navigation.navigate('requestview');
+        break;
       default:
         setRenderComponent(null);
         setShowModal(false);
@@ -314,13 +317,13 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       options.push(obj);
 
       obj = {
-        title: 'Ver Solicitudes usuarios',
+        title: 'Ver Solicitudes',
         iconType: 'material-community',
         iconNameLeft: 'email-mark-as-unread',
         iconColorLeft: '#ccc',
         iconNameRight: 'chevron-right',
         iconColorRight: '#ccc',
-        onPress: () => selectComponent(''),
+        onPress: () => selectComponent('viewrequest'),
       };
       options.push(obj);
     } else {
@@ -345,13 +348,13 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: 'Ver Solicitudes usuarios',
+        title: 'Ver Solicitudes',
         iconType: 'material-community',
         iconNameLeft: 'email-mark-as-unread',
         iconColorLeft: '#ccc',
         iconNameRight: 'chevron-right',
         iconColorRight: '#ccc',
-        onPress: () => selectComponent(''),
+        onPress: () => selectComponent('viewrequest'),
       };
       options.push(obj);
     }
@@ -414,7 +417,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
         iconColorLeft: '#ccc',
         iconNameRight: 'chevron-right',
         iconColorRight: '#ccc',
-        onPress: () => selectComponent(''),
+        onPress: () => selectComponent('viewrequest'),
       };
       options.push(obj);
     } else {
@@ -446,6 +449,16 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
         iconNameRight: 'chevron-right',
         iconColorRight: '#ccc',
         onPress: () => selectComponent('adminUsers'),
+      };
+      options.push(obj);
+      obj = {
+        title: 'Ver Solicitudes',
+        iconType: 'material-community',
+        iconNameLeft: 'email-mark-as-unread',
+        iconColorLeft: '#ccc',
+        iconNameRight: 'chevron-right',
+        iconColorRight: '#ccc',
+        onPress: () => selectComponent('viewrequest'),
       };
       options.push(obj);
     }

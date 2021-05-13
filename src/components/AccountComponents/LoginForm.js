@@ -33,7 +33,10 @@ export default function LoginForm(props) {
         .signInWithEmailAndPassword(formData.email, formData.password)
         .then(response => {
           setLoading(false);
-          const photoURL = response.user.photoURL;
+          const photoURL =
+            response.user.photoURL !== '' || response.user.photoURL
+              ? response.user.photoURL
+              : '';
           const uid = response.user.uid;
 
           firebase

@@ -14,6 +14,7 @@ import EditGame from 'ProyectoVideoJuegos/src/screens/mainScreen/EditGame';
 import ViewGameInfo from 'ProyectoVideoJuegos/src/screens/mainScreen/ViewGameInfo';
 import AddReviewGame from 'ProyectoVideoJuegos/src/screens/mainScreen/AddReviewGame';
 import AdministrateUsers from 'ProyectoVideoJuegos/src/screens/accountScreen/AdministrateUsers';
+import RequestView from 'ProyectoVideoJuegos/src/screens/accountScreen/RequestView';
 import ViewGameStats from 'ProyectoVideoJuegos/src/screens/libraryScreen/ViewGameStats';
 import AddPersonalGame from 'ProyectoVideoJuegos/src/screens/libraryScreen/AddPersonalGame';
 import EditPersonalGame from 'ProyectoVideoJuegos/src/screens/libraryScreen/EditPersonalGame';
@@ -88,6 +89,12 @@ function AccountStack() {
         }}
         name="adminusers"
         component={AdministrateUsers}></Stack.Screen>
+      <Stack.Screen
+        options={{
+          title: 'Solicitudes',
+        }}
+        name="requestview"
+        component={RequestView}></Stack.Screen>
     </Stack.Navigator>
   );
 }
