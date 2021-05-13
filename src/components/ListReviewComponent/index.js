@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {Button, Avatar, Rating} from 'react-native-elements';
+import {Button, Avatar, Rating, Icon} from 'react-native-elements';
 import moment from 'moment';
 import {map} from 'lodash';
 import * as firebase from 'firebase';
@@ -14,6 +14,8 @@ export default function ListReviewComponent(props) {
 
   const [userLogger, setUserLogger] = useState(false);
   const [reviews, setReviews] = useState([]);
+  const [users, setUsers] = useState(null);
+  const [actualyUser, setActualyUser] = useState(null);
 
   firebase.auth().onAuthStateChanged(user => {
     user ? setUserLogger(true) : setUserLogger(false);
@@ -30,7 +32,27 @@ export default function ListReviewComponent(props) {
         });
         setReviews(resultReview);
       });
+    database.ref('Usuarios').on('value', snapshot => {
+      const resultUsers = [];
+      snapshot.forEach(children => {
+        resultUsers.push(children.val());
+      });
+      setUsers(resultUsers);
+    });
   }, []);
+
+  useEffect(() => {
+    if (userLogger) {
+      const uid = firebase.auth().currentUser.uid;
+      database
+        .ref('Usuarios')
+        .child(uid)
+        .on('value', snapshot => {
+          setActualyUser(snapshot.val());
+        });
+    }
+  }, [userLogger]);
+
   return (
     <View>
       {userLogger ? (
@@ -49,7 +71,7 @@ export default function ListReviewComponent(props) {
         <View>
           <Text
             style={styles.textStyle}
-            onPress={() => navigation.navigate('loginstack')}>
+            onPress={() => navigation.navigate('accountScreen')}>
             Para comentar necesitas estar registrado{'\n'}
             <Text style={{fontWeight: 'bold'}}>
               pulsa AQUÍ para iniciar Sesión
@@ -57,14 +79,60 @@ export default function ListReviewComponent(props) {
           </Text>
         </View>
       )}
-      {reviews && map(reviews, (r, index) => <Review key={index} review={r} />)}
+      {reviews &&
+        users &&
+        map(reviews, (r, index) => (
+          <Review
+            key={index}
+            review={r}
+            users={users}
+            actualyUser={actualyUser}
+          />
+        ))}
     </View>
   );
 }
 const Review = props => {
-  const {title, review, rating, createAt, avatarUser} = props.review;
+  const {users, actualyUser} = props;
+  const {title, review, rating, createAt, idUser} = props.review;
   const date = new Date(createAt);
   const createReview = moment(date).format('DD/MM/YYYY-HH:mm');
+  let avatarUser;
+  users.forEach(user => {
+    if (user.uid === idUser) {
+      avatarUser = user.photoURL;
+    }
+  });
+
+  const showDeleteIconFunction = () => {
+    let show = false;
+    if (actualyUser) {
+      if (actualyUser.uid === idUser) {
+        show = true;
+      } else if (
+        actualyUser.userType === 'admin' ||
+        actualyUser.userType === 'moderator'
+      ) {
+        show = true;
+      } else {
+        show = false;
+      }
+    }
+    return show;
+  };
+  const showEditIconFunction = () => {
+    let show = false;
+    if (actualyUser) {
+      if (actualyUser.uid === idUser) {
+        show = true;
+      } else {
+        show = false;
+      }
+    }
+    return show;
+  };
+  const showDeleteIcon = showDeleteIconFunction();
+  const showEditIcon = showEditIconFunction();
 
   return (
     <View style={styles.viewReview}>
@@ -82,8 +150,29 @@ const Review = props => {
       </View>
       <View style={styles.viewInfo}>
         <Text style={styles.reviewTitle}>{title}</Text>
+        {showDeleteIcon && (
+          <Icon
+            type="material-community"
+            containerStyle={styles.deleteIcon}
+            name="trash-can"
+            onPress={() => {}}
+          />
+        )}
+        {showEditIcon && (
+          <Icon
+            type="material-community"
+            containerStyle={[
+              styles.deleteIcon,
+              {right: showDeleteIcon ? 30 : 0},
+            ]}
+            name="pencil"
+            onPress={() => {}}
+          />
+        )}
+
         <Text style={styles.reviewText}>{review}</Text>
         <Rating imageSize={15} startingValue={rating} readonly />
+
         <Text style={styles.reviewDate}>{createReview}</Text>
       </View>
     </View>
@@ -135,5 +224,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     bottom: 0,
+  },
+  deleteIcon: {
+    marginTop: 5,
+    position: 'absolute',
+    right: 0,
   },
 });

@@ -13,11 +13,10 @@ import {
 export default function LibraryScreen(props) {
   const [login, setLogin] = useState(null);
 
-  useEffect(() => {
-    firebase.auth().onAuthStateChanged(user => {
-      !user ? setLogin(false) : setLogin(true);
-    });
-  }, []);
+  firebase.auth().onAuthStateChanged(user => {
+    !user ? setLogin(false) : setLogin(true);
+  });
+
   if (login === null)
     return <LoadingComponent isVisible={true} text="cargando..." />;
   return login ? (

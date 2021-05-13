@@ -6,8 +6,6 @@ import {
   AccountScreen,
   LibraryScreen,
   SearchScreen,
-  LoginScreen,
-  RegisterScreen,
 } from 'ProyectoVideoJuegos/src/screens';
 import AddGame from 'ProyectoVideoJuegos/src/screens/mainScreen/AddGame';
 import EditGame from 'ProyectoVideoJuegos/src/screens/mainScreen/EditGame';
@@ -15,6 +13,8 @@ import ViewGameInfo from 'ProyectoVideoJuegos/src/screens/mainScreen/ViewGameInf
 import AddReviewGame from 'ProyectoVideoJuegos/src/screens/mainScreen/AddReviewGame';
 import AdministrateUsers from 'ProyectoVideoJuegos/src/screens/accountScreen/AdministrateUsers';
 import RequestView from 'ProyectoVideoJuegos/src/screens/accountScreen/RequestView';
+import LoginScreen from 'ProyectoVideoJuegos/src/screens/accountScreen/LoginScreen';
+import RegisterScreen from 'ProyectoVideoJuegos/src/screens/accountScreen/RegisterScreen';
 import ViewGameStats from 'ProyectoVideoJuegos/src/screens/libraryScreen/ViewGameStats';
 import AddPersonalGame from 'ProyectoVideoJuegos/src/screens/libraryScreen/AddPersonalGame';
 import EditPersonalGame from 'ProyectoVideoJuegos/src/screens/libraryScreen/EditPersonalGame';
@@ -75,13 +75,13 @@ function AccountStack() {
         options={{
           title: 'Iniciar Sesión',
         }}
-        name="loginstack"
+        name="loginscreen"
         component={LoginScreen}></Stack.Screen>
       <Stack.Screen
         options={{
           title: 'Registrarse',
         }}
-        name="registerstack"
+        name="registerscreen"
         component={RegisterScreen}></Stack.Screen>
       <Stack.Screen
         options={{

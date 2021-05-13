@@ -22,7 +22,7 @@ export default function CreateAccountMensagge(props) {
           containerStyle={styles.btnContainer}
           title="Registrarse"
           onPress={() =>
-            navigation.navigate('accountScreen', {screen: 'loginstack'})
+            navigation.navigate('accountScreen', {screen: 'loginscreen'})
           }
         />
       </View>

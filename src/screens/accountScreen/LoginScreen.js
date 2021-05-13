@@ -10,7 +10,6 @@ import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
 import {
   SocialLoginComponent,
   ModalComponent,
-  LoadingComponent,
 } from 'ProyectoVideoJuegos/src/components';
 import {validateEmail} from 'ProyectoVideoJuegos/src/utils/validations';
 
@@ -54,7 +53,7 @@ function CreateAccount(props) {
         ¿Aún no tienes una cuenta?{' '}
         <Text
           style={styles.btnRegister}
-          onPress={() => navigation.navigate('registerstack')}>
+          onPress={() => navigation.navigate('registerscreen')}>
           Regístrate
         </Text>
       </Text>

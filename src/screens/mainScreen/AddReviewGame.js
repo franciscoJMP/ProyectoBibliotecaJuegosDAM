@@ -29,7 +29,6 @@ export default function AddReviewGame(props) {
       const createAt = new Date();
       const paylod = {
         idUser: user.uid,
-        avatarUser: user.photoURL,
         idGame: idGame,
         title: title,
         review: review,

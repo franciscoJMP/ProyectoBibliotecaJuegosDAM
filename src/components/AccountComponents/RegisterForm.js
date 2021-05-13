@@ -173,6 +173,7 @@ const styles = StyleSheet.create({
   },
   inputForm: {
     width: '100%',
+    height: 50,
     marginTop: 20,
   },
   btnStyle: {
