@@ -12,7 +12,7 @@ const database = firebase.database();
 export default function AddReviewGame(props) {
   const {navigation, route} = props;
   const {idGame} = route.params;
-  const [rating, setRating] = useState(null);
+  const [rating, setRating] = useState(1);
   const [title, setTitle] = useState('');
   const [review, setReview] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -34,6 +34,7 @@ export default function AddReviewGame(props) {
         review: review,
         rating: rating,
         createAt: createAt.toString(),
+        isEdited: false,
       };
 
       database
@@ -70,7 +71,6 @@ export default function AddReviewGame(props) {
         setIsLoading(false), navigation.goBack();
       });
   };
-
 
   return (
     <View style={styles.viewBody}>

@@ -17,6 +17,7 @@ import {
   LoadingComponent,
   CarouselComponent,
   ListReviewComponent,
+  ModalComponent,
 } from 'ProyectoVideoJuegos/src/components';
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
 
@@ -34,6 +35,10 @@ export default function ViewGameInfo(props) {
   const [isFavourite, setIsFavourite] = useState(false);
   const [userLogged, setUserLogged] = useState(false);
   const [libraryKey, setLibraryKey] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [renderComponent, setRenderComponent] = useState(null);
 
   const toastRef = useRef();
   //Funcion para truncar el titulo si es muy largo
@@ -175,8 +180,22 @@ export default function ViewGameInfo(props) {
         <Stats gameInfo={gameInfo} />
       </List.Accordion>
 
-      <ListReviewComponent navigation={navigation} idGame={gameInfo.id} />
+      <ListReviewComponent
+        navigation={navigation}
+        toastRef={toastRef}
+        gameInfo={gameInfo}
+        setIsLoading={setIsLoading}
+        setLoadingText={setLoadingText}
+        setShowModal={setShowModal}
+        setRenderComponent={setRenderComponent}
+      />
       <Toast ref={toastRef} position="center" opacity={0.9} />
+      {renderComponent && (
+        <ModalComponent isVisible={showModal} setIsVisible={setShowModal}>
+          {renderComponent}
+        </ModalComponent>
+      )}
+      <LoadingComponent isVisible={isLoading} text={loadingText} />
     </ScrollView>
   );
 }
@@ -253,15 +272,19 @@ const Stats = props => {
   return (
     <View style={styles.viewGameInfo}>
       <Text style={styles.infosText}>
-        Historia Principal: {mainStory === '0' || isNaN(main) ? 'Sin estadistica' : main} horas.
+        Historia Principal:{' '}
+        {mainStory === '0' || isNaN(main) ? 'Sin estadistica' : main} horas.
       </Text>
 
       <Text style={styles.infosText}>
-        Extras: {mainPlusExtra === '0' || isNaN(extra) ? 'Sin estadistica' : extra} horas.
+        Extras:{' '}
+        {mainPlusExtra === '0' || isNaN(extra) ? 'Sin estadistica' : extra}{' '}
+        horas.
       </Text>
 
       <Text style={styles.infosText}>
-        Completar el 100%: {full === '0' || isNaN(auxFull) ? 'Sin estadistica' : auxFull} horas.
+        Completar el 100%:{' '}
+        {full === '0' || isNaN(auxFull) ? 'Sin estadistica' : auxFull} horas.
       </Text>
     </View>
   );
