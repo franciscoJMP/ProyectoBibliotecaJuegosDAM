@@ -432,6 +432,7 @@ const styles = StyleSheet.create({
     paddingTop: 2,
     color: 'gray',
     marginBottom: 5,
+    width: '80%',
   },
   reviewDate: {
     marginTop: 5,

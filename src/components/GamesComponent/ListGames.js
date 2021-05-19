@@ -17,12 +17,7 @@ import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
 
 const database = firebase.database();
 export default function ListGames(props) {
-  const {
-    gamesList,
-    userInfo,
-    handleLoadMore,
-    isLoading,
-  } = props;
+  const {gamesList, userInfo, handleLoadMore, isLoading} = props;
 
   const [isLoadingComponent, setIsLoadingComponent] = useState(false);
   let userType = null;
@@ -52,13 +47,7 @@ export default function ListGames(props) {
 }
 const GamesRender = props => {
   const {game, navigation, userType, setIsLoadingComponent} = props;
-  const {
-    id,
-    gameName,
-    gameDevelop,
-    gameDescription,
-    imagesGames,
-  } = game.item;
+  const {id, gameName, gameDevelop, gameDescription, imagesGames} = game.item;
   const imageGame = imagesGames[0];
   const goInfoGame = () => {
     navigation.navigate('viewgameinfo', {
@@ -159,11 +148,11 @@ const GamesRender = props => {
             style={styles.imageGameStyle}
           />
         </View>
-        <View>
+        <View style={{width: '100%'}}>
           <Text style={styles.gameNameStyle}>{gameName}</Text>
           <Text style={styles.gameDevelopStyle}>{gameDevelop}</Text>
           <Text style={styles.gameDescriptionStyle}>
-            {gameDescription.substr(0, 60)}...
+            {gameDescription.substr(0, 50)}...
           </Text>
           {userType && userType !== 'normal' && (
             <View style={{flexDirection: 'row'}}>
@@ -223,7 +212,7 @@ const styles = StyleSheet.create({
   gameDescriptionStyle: {
     paddingTop: 2,
     color: 'gray',
-    width: 300,
+    marginRight: 100,
   },
   loadinGames: {
     marginTop: 10,

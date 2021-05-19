@@ -11,7 +11,6 @@ import {Image, Icon, Button, Input} from 'react-native-elements';
 import {List} from 'react-native-paper';
 import Toast from 'react-native-easy-toast';
 import DropDownPicker from 'react-native-dropdown-picker';
-import AlertAsync from 'react-native-alert-async';
 import * as firebase from 'firebase';
 import 'firebase/storage';
 import 'firebase/database';
@@ -548,6 +547,7 @@ const AddGameStats = props => {
     const obj = {label: platform, value: platform};
     listGamesPlatform.push(obj);
   });
+  console.log(gamePlatform);
 
   return (
     <ScrollView

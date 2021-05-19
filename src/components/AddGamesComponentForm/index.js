@@ -46,6 +46,7 @@ const widthScreen = Dimensions.get('window').width;
 
 export default function AddGamesComponentForm(props) {
   const {toastRef, setIsLoading, navigation} = props;
+
   //useStates
   const [gameName, setGameName] = useState('');
   const [gameDevelop, setGameDevelop] = useState('');

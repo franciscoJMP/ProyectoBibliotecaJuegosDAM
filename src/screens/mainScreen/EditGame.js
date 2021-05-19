@@ -65,9 +65,11 @@ export default function EditGame(props) {
       },
     });
     database.child(id).on('value', snapshot => {
-      setGameInfo(snapshot.val());
-      setImagesSelected(snapshot.val().imagesGames);
-      setAuxImagesSelected(snapshot.val().imagesGames);
+      if (snapshot.exists()) {
+        setGameInfo(snapshot.val());
+        setImagesSelected(snapshot.val().imagesGames);
+        setAuxImagesSelected(snapshot.val().imagesGames);
+      }
     });
   }, []);
 
