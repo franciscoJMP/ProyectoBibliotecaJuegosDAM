@@ -30,6 +30,7 @@ export default function LibraryComponent(props) {
   const [isLoading, setIsLoading] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [search, setSearch] = useState('');
+  const [isFilterActive, setIsFilterActive] = useState(false);
   const toastRef = useRef();
   const navigation = useNavigation();
 
@@ -98,6 +99,33 @@ export default function LibraryComponent(props) {
       });
     });
     return Promise.all(arrayGames);
+  };
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Icon
+          type="material-community"
+          name={!isFilterActive ? 'filter' : 'filter-remove'}
+          size={30}
+          onPress={!isFilterActive ? listFilter : resetFilter}
+          iconStyle={{color: '#fff'}}
+          underlayColor="transparent"
+        />
+      ),
+    });
+  }, [isFilterActive]);
+
+  const listFilter = () => {
+    setIsFilterActive(true);
+    /* setRenderComponent(true);
+    setShowModal(true); */
+  };
+  const resetFilter = () => {
+    setIsFilterActive(false);
+    /* setTotalFilterList(null);
+    setGameFilterList(null);
+    setRenderComponent(false); */
   };
 
   if (games?.length === 0) {

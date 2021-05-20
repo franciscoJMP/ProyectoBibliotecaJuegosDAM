@@ -77,18 +77,21 @@ export default function MainScreen(props) {
     }, []),
   );
 
-  navigation.setOptions({
-    headerRight: () => (
-      <Icon
-        type="material-community"
-        name={!isFilterActive ? 'filter' : 'filter-remove'}
-        size={30}
-        onPress={!isFilterActive ? listFilter : resetFilter}
-        iconStyle={{color: '#fff'}}
-        underlayColor="transparent"
-      />
-    ),
-  });
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Icon
+          type="material-community"
+          name={!isFilterActive ? 'filter' : 'filter-remove'}
+          size={30}
+          onPress={!isFilterActive ? listFilter : resetFilter}
+          iconStyle={{color: '#fff'}}
+          underlayColor="transparent"
+        />
+      ),
+    });
+  }, [isFilterActive]);
+
   const listFilter = () => {
     setRenderComponent(true);
     setShowModal(true);
