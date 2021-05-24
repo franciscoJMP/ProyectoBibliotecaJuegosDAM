@@ -10,7 +10,7 @@ import {
   NativeModules,
 } from 'react-native';
 import {Image, Icon, Button, SearchBar} from 'react-native-elements';
-
+import NetInfo from '@react-native-community/netinfo';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Toast from 'react-native-easy-toast';
 import {size} from 'lodash';
@@ -22,6 +22,7 @@ import {isEmpty} from 'lodash';
 import {
   LoadingComponent,
   ModalComponent,
+  NotNetworkConnection,
 } from 'ProyectoVideoJuegos/src/components';
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
 import {items} from '../../screens/libraryScreen/items';
@@ -33,6 +34,7 @@ const propiedadesDB = firebase.database().ref('Propiedades');
 
 export default function LibraryComponent(props) {
   const [games, setGames] = useState(null);
+  const [networkInfo, setNetworkInfo] = useState(true);
   const [savesGames, setSavesGames] = useState(null);
   const [userLogged, setUserLogged] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -76,6 +78,11 @@ export default function LibraryComponent(props) {
       }
     }, [userLogged]),
   );
+  useEffect(() => {
+    NetInfo.addEventListener(state => {
+      setNetworkInfo(state.isInternetReachable);
+    });
+  }, []);
 
   useEffect(() => {
     if (search) {
@@ -139,7 +146,7 @@ export default function LibraryComponent(props) {
         headerRight: null,
       });
     }
-  }, [isFilterActive, games]);
+  }, [isFilterActive, games, networkInfo]);
 
   const listFilter = () => {
     setRenderComponent(true);

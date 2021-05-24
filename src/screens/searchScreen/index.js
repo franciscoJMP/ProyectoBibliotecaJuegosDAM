@@ -2,14 +2,17 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, FlatList, Image} from 'react-native';
 import {SearchBar, ListItem, Icon} from 'react-native-elements';
 import * as firebase from 'firebase';
+import NetInfo from '@react-native-community/netinfo';
 import 'firebase/storage';
 import 'firebase/database';
+import {NotNetworkConnection} from 'ProyectoVideoJuegos/src/components';
 const juegosDB = firebase.database().ref('Juegos');
 
 export default function SearchScreen(props) {
   const {navigation} = props;
   const [search, setSearch] = useState('');
   const [games, setGames] = useState([]);
+  const [networkInfo, setNetworkInfo] = useState(true);
 
   useEffect(() => {
     if (search) {
@@ -33,27 +36,40 @@ export default function SearchScreen(props) {
       setGames([]);
     }
   }, [search]);
-  return (
-    <View>
-      <SearchBar
-        placeholder="Buscar Juego"
-        onChangeText={e => setSearch(e)}
-        value={search}
-        containerStyle={StyleSheet.searchBar}
-      />
-      {games.length === 0 ? (
-        <NotFoundGames />
-      ) : (
-        <FlatList
-          data={games}
-          renderItem={game => (
-            <GameComponent game={game} navigation={navigation} />
-          )}
-          keyExtractor={(item, index) => index.toString()}
+
+  useEffect(() => {
+    NetInfo.addEventListener(state => {
+      setNetworkInfo(state.isInternetReachable);
+    });
+    firebase.auth().onAuthStateChanged(user => {
+      !user ? setLogin(false) : setLogin(true);
+    });
+  }, []);
+  if (!networkInfo) {
+    return <NotNetworkConnection />;
+  } else {
+    return (
+      <View>
+        <SearchBar
+          placeholder="Buscar Juego"
+          onChangeText={e => setSearch(e)}
+          value={search}
+          containerStyle={StyleSheet.searchBar}
         />
-      )}
-    </View>
-  );
+        {games.length === 0 ? (
+          <NotFoundGames />
+        ) : (
+          <FlatList
+            data={games}
+            renderItem={game => (
+              <GameComponent game={game} navigation={navigation} />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        )}
+      </View>
+    );
+  }
 }
 const NotFoundGames = () => {
   return (

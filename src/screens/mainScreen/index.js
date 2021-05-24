@@ -11,6 +11,7 @@ import {
   LoadingComponent,
   GamesComponent,
   ModalComponent,
+  NotNetworkConnection,
 } from 'ProyectoVideoJuegos/src/components';
 import ListGames from 'ProyectoVideoJuegos/src/components/GamesComponent/ListGames';
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
@@ -78,19 +79,25 @@ export default function MainScreen(props) {
   );
 
   useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Icon
-          type="material-community"
-          name={!isFilterActive ? 'filter' : 'filter-remove'}
-          size={30}
-          onPress={!isFilterActive ? listFilter : resetFilter}
-          iconStyle={{color: '#fff'}}
-          underlayColor="transparent"
-        />
-      ),
-    });
-  }, [isFilterActive]);
+    if (networkInfo) {
+      navigation.setOptions({
+        headerRight: () => (
+          <Icon
+            type="material-community"
+            name={!isFilterActive ? 'filter' : 'filter-remove'}
+            size={30}
+            onPress={!isFilterActive ? listFilter : resetFilter}
+            iconStyle={{color: '#fff'}}
+            underlayColor="transparent"
+          />
+        ),
+      });
+    } else {
+      navigation.setOptions({
+        headerRight: null,
+      });
+    }
+  }, [isFilterActive, networkInfo]);
 
   const listFilter = () => {
     setRenderComponent(true);
@@ -205,9 +212,7 @@ export default function MainScreen(props) {
       )}
     </Fragment>
   ) : (
-    <View>
-      <Text>Sin Conexion</Text>
-    </View>
+    <NotNetworkConnection />
   );
 }
 const FilterModal = props => {
