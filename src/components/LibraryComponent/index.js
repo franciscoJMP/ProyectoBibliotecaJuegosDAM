@@ -7,21 +7,29 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Alert,
+  NativeModules,
 } from 'react-native';
 import {Image, Icon, Button, SearchBar} from 'react-native-elements';
 
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Toast from 'react-native-easy-toast';
+import {size} from 'lodash';
+import DropDownPicker from 'react-native-dropdown-picker';
 import * as firebase from 'firebase';
 import 'firebase/storage';
 import 'firebase/database';
 import {isEmpty} from 'lodash';
-import {LoadingComponent} from 'ProyectoVideoJuegos/src/components';
+import {
+  LoadingComponent,
+  ModalComponent,
+} from 'ProyectoVideoJuegos/src/components';
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
+import {items} from '../../screens/libraryScreen/items';
 
 const bibliotecasDB = firebase.database().ref('Bibliotecas');
 const juegosDB = firebase.database().ref('Juegos');
 const usuariosDB = firebase.database().ref('Usuarios');
+const propiedadesDB = firebase.database().ref('Propiedades');
 
 export default function LibraryComponent(props) {
   const [games, setGames] = useState(null);
@@ -31,6 +39,9 @@ export default function LibraryComponent(props) {
   const [userInfo, setUserInfo] = useState(null);
   const [search, setSearch] = useState('');
   const [isFilterActive, setIsFilterActive] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [renderComponent, setRenderComponent] = useState(false);
+
   const toastRef = useRef();
   const navigation = useNavigation();
 
@@ -45,7 +56,15 @@ export default function LibraryComponent(props) {
         bibliotecasDB.child(idUser).on('value', snapshot => {
           const idGames = [];
           snapshot.forEach(children => {
-            idGames.push({idGame: children.val().idGame, key: children.key});
+            const gameState =
+              children.val().gameState === ''
+                ? 'No empezado'
+                : children.val().gameState;
+            idGames.push({
+              idGame: children.val().idGame,
+              gameState: gameState,
+              key: children.key,
+            });
           });
           getDataGames(idGames).then(response => {
             setGames(response);
@@ -94,7 +113,7 @@ export default function LibraryComponent(props) {
       const id = data.idGame;
       juegosDB.child(id).on('value', snapshot => {
         let object = snapshot.val();
-        object = {...object, key: data.key};
+        object = {...object, key: data.key, gameState: data.gameState};
         arrayGames.push(object);
       });
     });
@@ -102,30 +121,37 @@ export default function LibraryComponent(props) {
   };
 
   useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Icon
-          type="material-community"
-          name={!isFilterActive ? 'filter' : 'filter-remove'}
-          size={30}
-          onPress={!isFilterActive ? listFilter : resetFilter}
-          iconStyle={{color: '#fff'}}
-          underlayColor="transparent"
-        />
-      ),
-    });
-  }, [isFilterActive]);
+    if (games?.length > 0) {
+      navigation.setOptions({
+        headerRight: () => (
+          <Icon
+            type="material-community"
+            name={!isFilterActive ? 'filter' : 'filter-remove'}
+            size={30}
+            onPress={!isFilterActive ? listFilter : resetFilter}
+            iconStyle={{color: '#fff'}}
+            underlayColor="transparent"
+          />
+        ),
+      });
+    } else {
+      navigation.setOptions({
+        headerRight: null,
+      });
+    }
+  }, [isFilterActive, games]);
 
   const listFilter = () => {
-    setIsFilterActive(true);
-    /* setRenderComponent(true);
-    setShowModal(true); */
+    setRenderComponent(true);
+    setSavesGames(null);
+    setSearch('');
+    setShowModal(true);
   };
   const resetFilter = () => {
     setIsFilterActive(false);
-    /* setTotalFilterList(null);
-    setGameFilterList(null);
-    setRenderComponent(false); */
+    setSavesGames(null);
+    setSearch('');
+    setRenderComponent(false);
   };
 
   if (games?.length === 0) {
@@ -146,19 +172,33 @@ export default function LibraryComponent(props) {
         containerStyle={StyleSheet.searchBar}
       />
       {games && userInfo ? (
-        <FlatList
-          data={savesGames ? savesGames : games}
-          renderItem={game => (
-            <Game
-              game={game}
-              userInfo={userInfo}
-              setIsLoading={setIsLoading}
-              toastRef={toastRef}
-              navigation={navigation}
-            />
+        <Fragment>
+          <FlatList
+            data={savesGames ? savesGames : games}
+            renderItem={game => (
+              <Game
+                game={game}
+                userInfo={userInfo}
+                setIsLoading={setIsLoading}
+                toastRef={toastRef}
+                navigation={navigation}
+              />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
+          {renderComponent && (
+            <ModalComponent isVisible={showModal} setIsVisible={setShowModal}>
+              <FilterModal
+                setSavesGames={setSavesGames}
+                setIsFilterActive={setIsFilterActive}
+                setShowModal={setShowModal}
+                setRenderComponent={setRenderComponent}
+                games={games}
+                toastRef={toastRef}
+              />
+            </ModalComponent>
           )}
-          keyExtractor={(item, index) => index.toString()}
-        />
+        </Fragment>
       ) : (
         <View style={styles.loaderGames}>
           <ActivityIndicator size="large" />
@@ -277,6 +317,194 @@ const Game = props => {
   );
 };
 
+const FilterModal = props => {
+  const {
+    setSavesGames,
+    games,
+    setShowModal,
+    setIsFilterActive,
+    setRenderComponent,
+    toastRef,
+  } = props;
+
+  const [selectedCategory, setSelectedCategory] = useState('Todas');
+  const [selectedPlatform, setSelectedPlatform] = useState('Todas');
+  const [selectedState, setSelectedState] = useState('Todos');
+  const [gamePlatforms, setGamePlatforms] = useState(null);
+  const [gameCategories, setGameCategories] = useState(null);
+
+  useEffect(() => {
+    propiedadesDB.child('Categorias').on('value', snapshot => {
+      const categories = snapshot.val()[
+        NativeModules.I18nManager.localeIdentifier === 'es_ES' ? 0 : 1
+      ].categories;
+      setGameCategories(categories);
+    });
+    propiedadesDB.child('Plataformas').on('value', snapshot => {
+      setGamePlatforms(snapshot.val());
+    });
+  }, []);
+
+  const filtersGames = () => {
+    setIsFilterActive(true);
+    const thisSaveGames = [];
+
+    const result =
+      selectedState !== 'Todos'
+        ? games.filter(game => game.gameState === selectedState)
+        : games;
+    result.forEach(game => {
+      const thisGameCategory = game.gameCategory;
+      const thisGamePlatform = game.gamePlatform;
+      if (selectedCategory !== 'Todas' && selectedPlatform !== 'Todas') {
+        thisGameCategory.forEach(gc => {
+          if (gc === selectedCategory) {
+            thisGamePlatform.forEach(gp => {
+              if (gp === selectedPlatform) {
+                thisSaveGames.push(game);
+              }
+            });
+          }
+        });
+      } else if (selectedCategory !== 'Todas' || selectedPlatform !== 'Todas') {
+        if (selectedPlatform === 'Todas') {
+          thisGameCategory.forEach(gc => {
+            if (gc === selectedCategory) {
+              thisSaveGames.push(game);
+            }
+          });
+        } else {
+          thisGamePlatform.forEach(gp => {
+            if (gp === selectedPlatform) {
+              thisSaveGames.push(game);
+            }
+          });
+        }
+      } else {
+        thisSaveGames.push(game);
+      }
+    });
+
+    if (thisSaveGames.length > 0) {
+      setSavesGames(thisSaveGames);
+      setIsFilterActive(true);
+      setShowModal(false);
+    } else {
+      setIsFilterActive(false);
+      setShowModal(false);
+      toastRef.current.show('No se encontraron juegos', 1100);
+    }
+
+    setRenderComponent(false);
+  };
+
+  const listCategories = [];
+  listCategories.push({label: 'Todas', value: 'Todas'});
+
+  if (gameCategories !== null) {
+    gameCategories.forEach(gc => {
+      const obj = {label: gc, value: gc};
+      listCategories.push(obj);
+    });
+  }
+
+  const listPlatform = [];
+  listPlatform.push({label: 'Todas', value: 'Todas'});
+  if (gamePlatforms !== null) {
+    gamePlatforms.forEach(gp => {
+      const obj = {label: gp, value: gp};
+      listPlatform.push(obj);
+    });
+  }
+  const thisItems = [...items, {label: 'Todos', value: 'Todos'}];
+
+  return (
+    <View style={{height: '85%'}}>
+      <Text
+        style={{
+          fontWeight: 'bold',
+          fontSize: 20,
+          textAlign: 'center',
+          marginBottom: 20,
+        }}>
+        Busqueda Avanzada
+      </Text>
+      {gameCategories && gamePlatforms && (
+        <Fragment>
+          <Text
+            style={{
+              fontWeight: 'bold',
+              fontSize: 16,
+            }}>
+            Categorias:
+          </Text>
+          <DropDownPicker
+            items={listCategories}
+            placeholder="Categorias"
+            defaultValue="Todas"
+            containerStyle={{width: '100%', height: 50, marginTop: 20}}
+            style={{backgroundColor: '#fafafa'}}
+            dropDownStyle={{backgroundColor: '#fafafa'}}
+            onChangeItem={item => setSelectedCategory(item.value)}
+          />
+          <Text
+            style={{
+              marginTop: 20,
+              fontWeight: 'bold',
+              fontSize: 16,
+            }}>
+            Plataformas:
+          </Text>
+          <DropDownPicker
+            items={listPlatform}
+            defaultValue="Todas"
+            placeholder="Plataformas"
+            containerStyle={{
+              width: '100%',
+              height: 50,
+              marginTop: 20,
+              marginBottom: 30,
+            }}
+            style={{backgroundColor: '#fafafa'}}
+            dropDownStyle={{backgroundColor: '#fafafa'}}
+            onChangeItem={item => setSelectedPlatform(item.value)}
+          />
+          <Text
+            style={{
+              marginTop: 10,
+              fontWeight: 'bold',
+              fontSize: 16,
+            }}>
+            Estado:
+          </Text>
+          <DropDownPicker
+            items={thisItems}
+            placeholder="Estado"
+            defaultValue="Todos"
+            containerStyle={{
+              width: '100%',
+              height: 50,
+              marginTop: 10,
+              marginBottom: 30,
+            }}
+            style={{backgroundColor: '#fafafa'}}
+            itemStyle={{
+              justifyContent: 'flex-start',
+            }}
+            dropDownStyle={{backgroundColor: '#fafafa'}}
+            onChangeItem={item => setSelectedState(item.value)}
+          />
+        </Fragment>
+      )}
+      <Button
+        title="Aplicar Filtros"
+        onPress={filtersGames}
+        containerStyle={{marginTop: 20}}
+        buttonStyle={styles.btn}></Button>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   viewBody: {
     flex: 1,
@@ -326,5 +554,8 @@ const styles = StyleSheet.create({
     shadowColor: 'black',
     shadowOffset: {width: 2, height: 2},
     shadowOpacity: 0.5,
+  },
+  btn: {
+    backgroundColor: colors.primary,
   },
 });

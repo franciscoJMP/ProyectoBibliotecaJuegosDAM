@@ -187,7 +187,7 @@ export default function MainScreen(props) {
               userInfo={null}
               totalGamesList={isFilterActive ? totalFilterList : totalGamesList}
               handleLoadMore={!isFilterActive && handleLoadMore}
-              isLoading={!isGameFilter ? isLoading : false}
+              isLoading={!isFilterActive ? isLoading : false}
             />
           )}
         </Fragment>
