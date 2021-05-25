@@ -221,7 +221,7 @@ export default function LibraryComponent(props) {
           containerStyle={styles.btnContainer}
           onPress={() => navigation.navigate('addpersonalgame')}></Icon>
       </Fragment>
-      <Toast ref={toastRef} position="center" opacity={0.9} />
+      <Toast ref={toastRef} position="bottom" opacity={0.9} />
       <LoadingComponent text="Eliminando juego" isVisible={isLoading} />
     </View>
   );

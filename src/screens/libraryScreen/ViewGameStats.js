@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {Image, Icon, Button, Input} from 'react-native-elements';
 import {List} from 'react-native-paper';
+import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
 import DropDownPicker from 'react-native-dropdown-picker';
 import * as firebase from 'firebase';
@@ -19,6 +20,7 @@ import {
   LoadingComponent,
   CarouselComponent,
   ModalComponent,
+  NotNetworkConnection,
 } from 'ProyectoVideoJuegos/src/components';
 import {
   ChangeMainHours,
@@ -39,7 +41,7 @@ const screenWidth = Dimensions.get('window').width;
 export default function ViewGameStats(props) {
   const {navigation, route} = props;
   const {id, gameName, key} = route.params;
-
+  const [networkInfo, setNetworkInfo] = useState(true);
   const [gameInfo, setGameInfo] = useState(null);
   const [gamesLibraryInfo, setGamesLibraryInfo] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
@@ -102,6 +104,15 @@ export default function ViewGameStats(props) {
     setShowModal(true);
   };
 
+  useEffect(() => {
+    NetInfo.addEventListener(state => {
+      setNetworkInfo(state.isInternetReachable);
+    });
+    firebase.auth().onAuthStateChanged(user => {
+      !user ? setLogin(false) : setLogin(true);
+    });
+  }, []);
+
   if (!gameInfo || !gamesLibraryInfo || !userInfo)
     return <LoadingComponent isVisible={true} text="Cargando..." />;
   return (
@@ -118,6 +129,10 @@ export default function ViewGameStats(props) {
       />
       <List.Accordion
         title="Información General"
+        titleStyle={{
+          fontSize: 18,
+          fontWeight: 'bold',
+        }}
         expanded={expandedInfo}
         onPress={handlePressGeneralInfo}>
         <GameInfo
@@ -130,6 +145,10 @@ export default function ViewGameStats(props) {
 
       <List.Accordion
         title="Estadisticas"
+        titleStyle={{
+          fontSize: 18,
+          fontWeight: 'bold',
+        }}
         expanded={expandedPersonalInfo}
         onPress={handlePressPersonalInfo}>
         <Stats
@@ -209,10 +228,40 @@ const GameInfo = props => {
   }
   return (
     <View style={styles.viewGameInfo}>
-      <Text style={styles.infosText}>Desarroladora: {gameDevelop}</Text>
-      <Text style={styles.infosText}>Fecha de salida: {gameYear}</Text>
-      <Text style={styles.infosText}>Historia Principal: {mainStory}</Text>
-      <Text style={styles.infosText}>Completar el 100%: {mainPlusExtra}</Text>
+      <View style={styles.viewTextStats}>
+        <Text style={[styles.titleInfoText, {paddingBottom: 10}]}>
+          Desarrolladora
+        </Text>
+        <View style={{alignItems: 'center'}}>
+          <Text style={{marginBottom: 10, fontSize: 18}}>{gameDevelop}</Text>
+        </View>
+      </View>
+
+      <View style={styles.viewTextStats}>
+        <Text style={[styles.titleInfoText, {paddingBottom: 10}]}>
+          Fecha de salida
+        </Text>
+        <View style={{alignItems: 'center'}}>
+          <Text style={{marginBottom: 10, fontSize: 18}}>{gameYear}</Text>
+        </View>
+      </View>
+      <View style={styles.viewTextStats}>
+        <Text style={[styles.titleInfoText, {paddingBottom: 10}]}>
+          Historia Principal
+        </Text>
+        <View style={{alignItems: 'center'}}>
+          <Text style={{marginBottom: 10, fontSize: 18}}>{mainStory}</Text>
+        </View>
+      </View>
+      <View style={styles.viewTextStats}>
+        <Text style={[styles.titleInfoText, {paddingBottom: 10}]}>
+          Completar el 100%
+        </Text>
+        <View style={{alignItems: 'center'}}>
+          <Text style={{marginBottom: 10, fontSize: 18}}>{mainPlusExtra}</Text>
+        </View>
+      </View>
+
       {createdBy !== user && (
         <Text style={styles.infosText}>Nota Media: {rating}/5</Text>
       )}
@@ -345,139 +394,173 @@ const Stats = props => {
     <View style={styles.viewGameInfo}>
       <View style={styles.viewTextStats}>
         <Text style={styles.infosText}>
-          Estado: <Text>{gameState === '' ? 'Sin estado' : gameState} </Text>
+          <Text style={styles.titleInfoText}>Estado</Text>{' '}
         </Text>
-        {gameState !== '' && (
-          <Icon
-            type="material-community"
-            name="pencil-outline"
-            containerStyle={styles.containerIcon}
-            onPress={() => {
-              setRenderComponent(
-                <ChangeState
-                  libraryId={libraryId}
-                  setShowModal={setShowModal}
-                  gameState={gameState}
-                  items={items}
-                />,
-              );
-              setShowModal(true);
-            }}
-          />
-        )}
+        <View style={{alignItems: 'center'}}>
+          <Text style={{marginBottom: 20}}>
+            {gameState === '' ? 'Sin estado' : gameState}{' '}
+          </Text>
+          {gameState !== '' && (
+            <Icon
+              type="material-community"
+              name="pencil-outline"
+              containerStyle={styles.containerIcon}
+              onPress={() => {
+                setRenderComponent(
+                  <ChangeState
+                    libraryId={libraryId}
+                    setShowModal={setShowModal}
+                    gameState={gameState}
+                    items={items}
+                  />,
+                );
+                setShowModal(true);
+              }}
+            />
+          )}
+        </View>
       </View>
 
       <View style={styles.viewTextStats}>
         <Text style={styles.infosText}>
-          Historia Principal: {mainHours === '' ? '0' : mainHours}{' '}
+          <Text style={styles.titleInfoText}>Historia Principal</Text>{' '}
         </Text>
-        {mainHours !== '' && (
-          <Icon
-            type="material-community"
-            name="pencil-outline"
-            containerStyle={styles.containerIcon}
-            onPress={() => {
-              setRenderComponent(
-                <ChangeMainHours
-                  libraryId={libraryId}
-                  setShowModal={setShowModal}
-                  mainHours={mainHours}
-                />,
-              );
-              setShowModal(true);
-            }}
-          />
-        )}
+        <View style={{alignItems: 'center'}}>
+          <Text style={{marginBottom: 20}}>
+            {mainHours === '' ? '0' : mainHours}
+          </Text>
+          {mainHours !== '' && (
+            <Icon
+              type="material-community"
+              name="pencil-outline"
+              containerStyle={styles.containerIcon}
+              onPress={() => {
+                setRenderComponent(
+                  <ChangeMainHours
+                    libraryId={libraryId}
+                    setShowModal={setShowModal}
+                    mainHours={mainHours}
+                  />,
+                );
+                setShowModal(true);
+              }}
+            />
+          )}
+        </View>
       </View>
       <View style={styles.viewTextStats}>
         <Text style={styles.infosText}>
-          Extras: {plusExtra === '' ? '0' : plusExtra}{' '}
+          <Text style={styles.titleInfoText}>Extras</Text>
         </Text>
-        {plusExtra !== '' && (
-          <Icon
-            type="material-community"
-            name="pencil-outline"
-            containerStyle={styles.containerIcon}
-            onPress={() => {
-              setRenderComponent(
-                <ChangePlusExtra
-                  libraryId={libraryId}
-                  setShowModal={setShowModal}
-                  plusExtra={plusExtra}
-                />,
-              );
-              setShowModal(true);
-            }}
-          />
-        )}
+        <View style={{alignItems: 'center'}}>
+          <Text style={{marginBottom: 20}}>
+            {plusExtra === '' ? '0' : plusExtra}
+          </Text>
+          {plusExtra !== '' && (
+            <Icon
+              type="material-community"
+              name="pencil-outline"
+              containerStyle={styles.containerIcon}
+              onPress={() => {
+                setRenderComponent(
+                  <ChangePlusExtra
+                    libraryId={libraryId}
+                    setShowModal={setShowModal}
+                    plusExtra={plusExtra}
+                  />,
+                );
+                setShowModal(true);
+              }}
+            />
+          )}
+        </View>
       </View>
+
       <View style={styles.viewTextStats}>
         <Text style={styles.infosText}>
-          Completar el 100%: {fullHours === '' ? '0' : fullHours}{' '}
+          <Text style={styles.titleInfoText}>Completar el 100%</Text>
         </Text>
-        {fullHours !== '' && (
-          <Icon
-            type="material-community"
-            name="pencil-outline"
-            containerStyle={styles.containerIcon}
-            onPress={() => {
-              setRenderComponent(
-                <ChangeFull
-                  libraryId={libraryId}
-                  setShowModal={setShowModal}
-                  fullHours={fullHours}
-                />,
-              );
-              setShowModal(true);
-            }}
-          />
-        )}
+        <View style={{alignItems: 'center'}}>
+          <Text style={{marginBottom: 20}}>
+            {fullHours === '' ? 'Sin estadisticas' : fullHours}
+          </Text>
+          {fullHours !== '' && (
+            <Icon
+              type="material-community"
+              name="pencil-outline"
+              containerStyle={styles.containerIcon}
+              onPress={() => {
+                setRenderComponent(
+                  <ChangeFull
+                    libraryId={libraryId}
+                    setShowModal={setShowModal}
+                    fullHours={fullHours}
+                  />,
+                );
+                setShowModal(true);
+              }}
+            />
+          )}
+        </View>
       </View>
+
       <View style={styles.viewTextStats}>
         <Text style={styles.infosText}>
-          Precio: {price === '' ? '0' : price}{' '}
+          <Text style={styles.titleInfoText}>Precio</Text>
         </Text>
-        {price !== '' && (
-          <Icon
-            type="material-community"
-            name="pencil-outline"
-            containerStyle={styles.containerIcon}
-            onPress={() => {
-              setRenderComponent(
-                <ChangePrice
-                  libraryId={libraryId}
-                  setShowModal={setShowModal}
-                  price={price}
-                />,
-              );
-              setShowModal(true);
-            }}
-          />
-        )}
+        <View style={{alignItems: 'center'}}>
+          <Text style={{marginBottom: 20}}>
+            {price === '' ? 'Sin estadistica' : price + '€'}
+          </Text>
+          {price !== '' && (
+            <Icon
+              type="material-community"
+              name="pencil-outline"
+              containerStyle={styles.containerIcon}
+              onPress={() => {
+                setRenderComponent(
+                  <ChangePrice
+                    libraryId={libraryId}
+                    setShowModal={setShowModal}
+                    price={price}
+                  />,
+                );
+                setShowModal(true);
+              }}
+            />
+          )}
+        </View>
       </View>
+
       <View style={styles.viewTextStats}>
         <Text style={styles.infosText}>
-          Plataforma: {gamePlatform === '' ? 'Sin Plataforma' : gamePlatform}{' '}
+          <Text style={styles.titleInfoText}>Plataforma</Text>
         </Text>
-        {gamePlatform !== '' && (
-          <Icon
-            type="material-community"
-            name="pencil-outline"
-            containerStyle={styles.containerIcon}
-            onPress={() => {
-              setRenderComponent(
-                <ChangePlatform
-                  libraryId={libraryId}
-                  setShowModal={setShowModal}
-                  gamePlatform={gamePlatform}
-                  listGamesPlatform={listGamesPlatform}
-                />,
-              );
-              setShowModal(true);
-            }}
-          />
-        )}
+        <View style={{alignItems: 'center'}}>
+          <Text style={{marginBottom: 20}}>
+            {gamePlatform === '' ? 'Sin Plataforma' : gamePlatform}
+          </Text>
+          {gamePlatform !== '' && (
+            <Icon
+              type="material-community"
+              name="pencil-outline"
+              containerStyle={styles.containerIcon}
+              onPress={() => {
+                setRenderComponent(
+                  <ChangePlatform
+                    libraryId={libraryId}
+                    setShowModal={setShowModal}
+                    gamePlatform={gamePlatform}
+                    listGamesPlatform={listGamesPlatform}
+                  />,
+                );
+                setShowModal(true);
+              }}
+            />
+          )}
+        </View>
       </View>
+
       <Button
         title="Publicar Estadisticas"
         onPress={uploadStats}
@@ -547,7 +630,6 @@ const AddGameStats = props => {
     const obj = {label: platform, value: platform};
     listGamesPlatform.push(obj);
   });
-  console.log(gamePlatform);
 
   return (
     <ScrollView
@@ -648,6 +730,7 @@ const styles = StyleSheet.create({
   infosText: {
     margin: 10,
     fontSize: 15,
+    textAlign: 'center',
   },
   logo: {
     width: 50,
@@ -682,14 +765,24 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   viewTextStats: {
-    flexDirection: 'row',
-    alignContent: 'space-around',
+    borderWidth: 2,
+    borderRadius: 30,
+    marginBottom: 20,
   },
   containerIcon: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
     alignItems: 'center',
     marginTop: 5,
     marginRight: 15,
     height: 30,
     width: 30,
+  },
+  titleInfoText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    paddingBottom: 40,
+    textAlign: 'center',
   },
 });

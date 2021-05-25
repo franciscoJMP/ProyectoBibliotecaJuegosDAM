@@ -3,7 +3,9 @@ import {StyleSheet, Text, View, Alert, ScrollView} from 'react-native';
 import {Button, Avatar, Rating, Icon, Input} from 'react-native-elements';
 import moment from 'moment';
 import {AirbnbRating} from 'react-native-ratings';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import NetInfo from '@react-native-community/netinfo';
+import {NotNetworkConnection} from 'ProyectoVideoJuegos/src/components';
+import Toast from 'react-native-easy-toast';
 import {map} from 'lodash';
 import * as firebase from 'firebase';
 import 'firebase/database';
@@ -28,6 +30,7 @@ export default function ListReviewComponent(props) {
   const [userLogger, setUserLogger] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [users, setUsers] = useState(null);
+  const [networkInfo, setNetworkInfo] = useState(true);
   const [actualyUser, setActualyUser] = useState(null);
 
   firebase.auth().onAuthStateChanged(user => {
@@ -68,6 +71,12 @@ export default function ListReviewComponent(props) {
     }
   }, [userLogger]);
 
+  useEffect(() => {
+    NetInfo.addEventListener(state => {
+      setNetworkInfo(state.isInternetReachable);
+    });
+  }, []);
+
   return (
     <View>
       {userLogger ? (
@@ -80,7 +89,13 @@ export default function ListReviewComponent(props) {
             name: 'square-edit-outline',
             color: colors.primary,
           }}
-          onPress={() => navigation.navigate('addreviewgame', {idGame: idGame})}
+          onPress={() => {
+            if (networkInfo) {
+              navigation.navigate('addreviewgame', {idGame: idGame});
+            } else {
+              toastRef.current.show('Sin conexion', 1300);
+            }
+          }}
         />
       ) : (
         <View>
@@ -110,6 +125,8 @@ export default function ListReviewComponent(props) {
             setRenderComponent={setRenderComponent}
             ratingTotal={ratingTotal}
             quantityVoting={quantityVoting}
+            networkInfo={networkInfo}
+            toastRef={toastRef}
           />
         ))}
     </View>
@@ -127,6 +144,7 @@ const Review = props => {
     setRenderComponent,
     ratingTotal,
     quantityVoting,
+    networkInfo,
   } = props;
   const {
     title,
@@ -191,15 +209,23 @@ const Review = props => {
             setLoadingText('Eliminando comentario...');
             setIsLoading(true);
             setTimeout(() => {
-              database
-                .ref('Comentarios')
-                .child(idGame)
-                .child(commentKey)
-                .remove()
-                .then(() => {
-                  setIsLoading(false);
-                  toastRef.current.show('Comentario eliminado con exito', 1300);
-                });
+              if (networkInfo) {
+                database
+                  .ref('Comentarios')
+                  .child(idGame)
+                  .child(commentKey)
+                  .remove()
+                  .then(() => {
+                    setIsLoading(false);
+                    toastRef.current.show(
+                      'Comentario eliminado con exito',
+                      1300,
+                    );
+                  });
+              } else {
+                setIsLoading(false);
+                toastRef.current.show('Sin conexión', 1300);
+              }
             }, 500);
           },
         },
@@ -219,6 +245,7 @@ const Review = props => {
         ratingTotal={ratingTotal}
         quantityVoting={quantityVoting}
         setShowModal={setShowModal}
+        toastRef={toastRef}
       />,
     );
   };
@@ -255,7 +282,13 @@ const Review = props => {
               {right: showDeleteIcon ? 30 : 0},
             ]}
             name="pencil"
-            onPress={editComment}
+            onPress={
+              networkInfo
+                ? editComment
+                : () => {
+                    toastRef.current.show('Sin conexión', 1300);
+                  }
+            }
           />
         )}
 
@@ -278,6 +311,7 @@ const EditComment = props => {
     ratingTotal,
     quantityVoting,
     setShowModal,
+    toastRef,
   } = props;
   const {title, review, rating, commentKey} = props.review;
   const [newRaiting, setNewRaiting] = useState(rating);
@@ -285,13 +319,26 @@ const EditComment = props => {
   const [newReview, setNewReview] = useState(review);
   const [thisIsLoading, setThisIsLoading] = useState(false);
   const [error, setError] = useState({});
+  const [networkInfo, setNetworkInfo] = useState(true);
+
+  useEffect(() => {
+    NetInfo.addEventListener(state => {
+      setNetworkInfo(state.isInternetReachable);
+    });
+  }, []);
 
   const editComment = () => {
     let tempError = {};
+
     if (newTitleReview === '') {
       tempError = {title: 'El titulo no puede estar vacio'};
     } else if (newReview === '') {
       tempError = {comment: 'El comentario no puede estar vacio'};
+    } else if (!networkInfo) {
+      setThisIsLoading(false);
+      setIsLoading(false);
+      setShowModal(false);
+      toastRef.current.show('Sin conexión', 1300);
     } else {
       setThisIsLoading(true);
       setLoadingText('Editanto comentario...');
