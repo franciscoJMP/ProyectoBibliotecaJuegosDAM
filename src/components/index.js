@@ -9,6 +9,7 @@ import CarouselComponent from './CarouselComponent';
 import ListReviewComponent from './ListReviewComponent';
 import LibraryComponent from './LibraryComponent';
 import NotNetworkConnection from './NotNetworkConnection';
+import NotFoundSolicitude from './NotFoundSolicitude';
 export {
   LoadingComponent,
   CreateAccountMensagge,
@@ -21,4 +22,5 @@ export {
   ListReviewComponent,
   LibraryComponent,
   NotNetworkConnection,
+  NotFoundSolicitude,
 };

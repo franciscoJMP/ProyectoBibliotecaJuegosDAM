@@ -33,23 +33,22 @@ export default function LoginForm(props) {
         .signInWithEmailAndPassword(formData.email, formData.password)
         .then(response => {
           setLoading(false);
-          const photoURL =
-            response.user.photoURL !== '' || response.user.photoURL
-              ? response.user.photoURL
-              : '';
-          const uid = response.user.uid;
-
-          firebase
-            .database()
-            .ref('Usuarios')
-            .child(uid)
-            .update({photoURL: photoURL})
-            .then(() => {
-              navigation.navigate('accountstack');
-            });
+          if (response.user.photoURL !== '' || response.user.photoURL) {
+            firebase
+              .database()
+              .ref('Usuarios')
+              .child(response.user.uid)
+              .update({photoURL: response.user.photoURL})
+              .then(() => {
+                navigation.navigate('accountstack');
+              });
+          } else {
+            navigation.navigate('accountstack');
+          }
         })
-        .catch(() => {
+        .catch(e => {
           setLoading(false);
+          console.log(e);
           toastRef.current.show(texts.t('error_login'), 2000);
         });
     }

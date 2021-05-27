@@ -11,6 +11,7 @@ import {Image, Icon, Button, Input} from 'react-native-elements';
 import {List} from 'react-native-paper';
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
+import {map} from 'lodash';
 import DropDownPicker from 'react-native-dropdown-picker';
 import * as firebase from 'firebase';
 import 'firebase/storage';
@@ -47,6 +48,8 @@ export default function ViewGameStats(props) {
   const [userInfo, setUserInfo] = useState(null);
   const [expandedInfo, setExpandedInfo] = useState(false); //Expandir acordeon de Informacion General
   const [expandedPersonalInfo, setExpandedPersonalInfo] = useState(false); //Expandir acordeon de informacion Personal
+  const [expandedCategoryGame, setExpandedCategoryGame] = useState(false);
+  const [expandedPlatformGame, setExpandedPlatformGame] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [renderComponent, setRenderComponent] = useState(null);
   const toastRef = useRef();
@@ -92,6 +95,11 @@ export default function ViewGameStats(props) {
   const handlePressGeneralInfo = () => setExpandedInfo(!expandedInfo);
   const handlePressPersonalInfo = () =>
     setExpandedPersonalInfo(!expandedPersonalInfo);
+
+  const handlePressCategoryGame = () =>
+    setExpandedCategoryGame(!expandedCategoryGame);
+  const handlePressPlatformGame = () =>
+    setExpandedPlatformGame(!expandedPlatformGame);
   const viewAddStats = () => {
     setRenderComponent(
       <AddGameStats
@@ -161,6 +169,30 @@ export default function ViewGameStats(props) {
           gameInfo={gameInfo}
           toastRef={toastRef}
         />
+      </List.Accordion>
+
+      <List.Accordion
+        title="Categorias de Juego"
+        titleStyle={{
+          fontSize: 18,
+          fontWeight: 'bold',
+        }}
+        expanded={expandedCategoryGame}
+        onPress={handlePressCategoryGame}>
+        <GameCategoryList gameInfo={gameInfo} />
+      </List.Accordion>
+
+      <List.Accordion
+        title="Plataformas de Juego"
+        titleStyle={{
+          fontSize: 18,
+          fontWeight: 'bold',
+        }}
+        style={{marginBottom: 15}}
+        descriptionStyle={{width: '90%'}}
+        expanded={expandedPlatformGame}
+        onPress={handlePressPlatformGame}>
+        <GamePlatformList gameInfo={gameInfo} />
       </List.Accordion>
 
       <Button
@@ -704,6 +736,44 @@ const AddGameStats = props => {
     </ScrollView>
   );
 };
+
+const GameCategoryList = props => {
+  const {gameInfo} = props;
+  const {gameCategory} = gameInfo;
+  return (
+    <ScrollView horizontal={true} style={{flex: 1, flexDirection: 'row'}}>
+      {map(gameCategory, (gc, index) => (
+        <View
+          key={index}
+          style={{margin: 10, padding: 10, borderWidth: 3, borderRadius: 10}}>
+          <Text key={index}>{gc}</Text>
+        </View>
+      ))}
+    </ScrollView>
+  );
+};
+
+const GamePlatformList = props => {
+  const {gameInfo} = props;
+  const {gamePlatform} = gameInfo;
+  return (
+    <ScrollView
+      horizontal={true}
+      style={{
+        flex: 1,
+        flexDirection: 'row',
+      }}>
+      {map(gamePlatform, (gp, index) => (
+        <View
+          key={index}
+          style={{margin: 10, padding: 10, borderWidth: 3, borderRadius: 10}}>
+          <Text key={index}>{gp}</Text>
+        </View>
+      ))}
+    </ScrollView>
+  );
+};
+
 const styles = StyleSheet.create({
   viewBody: {
     flex: 1,

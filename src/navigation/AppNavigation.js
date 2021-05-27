@@ -3,7 +3,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from 'react-native-elements';
 import {MainStack, AccountStack, SearchStack, LibraryStack} from './Stacks';
-import { setI18nConfig } from "ProyectoVideoJuegos/src/languages/i18n.js";
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
 var texts = setI18nConfig();
 
 const Tab = createBottomTabNavigator();
@@ -21,19 +21,19 @@ export default function AppNavigation() {
           tabBarIcon: ({color}) => screenOptions(route, color),
         })}>
         <Tab.Screen
-          options={{title: texts.t("game_title")}}
+          options={{title: texts.t('game_title')}}
           name="mainscreen"
           component={MainStack}></Tab.Screen>
         <Tab.Screen
-          options={{title: 'Buscar'}}
+          options={{title: texts.t('search_title')}}
           name="searchscreen"
           component={SearchStack}></Tab.Screen>
         <Tab.Screen
-          options={{title: 'Biblioteca'}}
+          options={{title: texts.t('library_title')}}
           name="libraryscreen"
           component={LibraryStack}></Tab.Screen>
         <Tab.Screen
-          options={{title: 'Cuenta'}}
+          options={{title: texts.t('account_title')}}
           name="accountScreen"
           component={AccountStack}></Tab.Screen>
       </Tab.Navigator>

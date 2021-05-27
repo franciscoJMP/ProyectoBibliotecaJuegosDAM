@@ -8,6 +8,8 @@ import {LoadingComponent} from 'ProyectoVideoJuegos/src/components';
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Toast from 'react-native-easy-toast';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 const database = firebase.database();
 export default function AddReviewGame(props) {
   const {navigation, route} = props;
@@ -20,9 +22,9 @@ export default function AddReviewGame(props) {
 
   const addReview = () => {
     if (!title) {
-      toastRef.current.show('El titulo es obligatorio');
+      toastRef.current.show(texts.t('err_title_comment'));
     } else if (!review) {
-      toastRef.current.show('El comentario es obligatorio');
+      toastRef.current.show(texts.t('err_comment'));
     } else {
       setIsLoading(true);
       const user = firebase.auth().currentUser;
@@ -46,7 +48,7 @@ export default function AddReviewGame(props) {
         })
         .catch(() => {
           setIsLoading(false);
-          toastRef.current.show('Error al enviar el comentario');
+          toastRef.current.show(texts.t('err_tosend_comment'));
         });
     }
   };
@@ -77,7 +79,13 @@ export default function AddReviewGame(props) {
       <View style={styles.viewRating}>
         <AirbnbRating
           count={5}
-          reviews={['Pésimo', 'Deficiente', 'Normal', 'Bueno', 'Muy Bueno']}
+          reviews={[
+            texts.t('review_state1'),
+            texts.t('review_state2'),
+            texts.t('review_state3'),
+            texts.t('review_state4'),
+            texts.t('review_state5'),
+          ]}
           defaultRating={1}
           size={30}
           onFinishRating={value => setRating(value)}
@@ -85,25 +93,28 @@ export default function AddReviewGame(props) {
       </View>
       <KeyboardAwareScrollView contentContainerStyle={styles.formView}>
         <Input
-          placeholder="Titulo"
+          placeholder={texts.t('placeholder_comment_title')}
           style={styles.input}
           onChange={e => setTitle(e.nativeEvent.text)}
         />
         <Input
-          placeholder="Comentario..."
+          placeholder={texts.t('placeholder_commnet')}
           multiline={true}
           inputContainerStyle={styles.textArea}
           onChange={e => setReview(e.nativeEvent.text)}
         />
         <Button
-          title="Enviar Comentario"
+          title={texts.t('send_comment')}
           containerStyle={styles.btnContainer}
           buttonStyle={styles.btn}
           onPress={addReview}
         />
       </KeyboardAwareScrollView>
       <Toast ref={toastRef} position="center" opacity={0.9} />
-      <LoadingComponent isVisible={isLoading} text="Enviando Comentario" />
+      <LoadingComponent
+        isVisible={isLoading}
+        text={texts.t('sending_comment') + '...'}
+      />
     </View>
   );
 }

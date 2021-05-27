@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {View, Text} from 'react-native';
+
 import {
   MainScreen,
   AccountScreen,
@@ -48,7 +48,7 @@ function MainStack() {
         component={MainScreen}></Stack.Screen>
       <Stack.Screen
         options={{
-          title: 'Añadir Juego',
+          title: texts.t('add_game'),
         }}
         name="addgame"
         component={AddGame}></Stack.Screen>
@@ -56,7 +56,7 @@ function MainStack() {
       <Stack.Screen
         name="addreviewgame"
         component={AddReviewGame}
-        options={{title: 'Nuevo Comentario'}}></Stack.Screen>
+        options={{title: texts.t('new_comment')}}></Stack.Screen>
       <Stack.Screen name="editgame" component={EditGame}></Stack.Screen>
     </Stack.Navigator>
   );
@@ -73,25 +73,25 @@ function AccountStack() {
         component={AccountScreen}></Stack.Screen>
       <Stack.Screen
         options={{
-          title: 'Iniciar Sesión',
+          title: texts.t('singin_text'),
         }}
         name="loginscreen"
         component={LoginScreen}></Stack.Screen>
       <Stack.Screen
         options={{
-          title: 'Registrarse',
+          title: texts.t('register_text'),
         }}
         name="registerscreen"
         component={RegisterScreen}></Stack.Screen>
       <Stack.Screen
         options={{
-          title: 'Administrar Usuarios',
+          title: texts.t('admin_text'),
         }}
         name="adminusers"
         component={AdministrateUsers}></Stack.Screen>
       <Stack.Screen
         options={{
-          title: 'Solicitudes',
+          title: texts.t('request_text'),
         }}
         name="requestview"
         component={RequestView}></Stack.Screen>
@@ -104,7 +104,7 @@ function SearchStack() {
     <Stack.Navigator screenOptions={headerConfig.defaultNavigationOptions}>
       <Stack.Screen
         options={{
-          title: 'Buscar',
+          title: texts.t('search_title'),
         }}
         name="searchstack"
         component={SearchScreen}></Stack.Screen>
@@ -117,14 +117,14 @@ function LibraryStack() {
     <Stack.Navigator screenOptions={headerConfig.defaultNavigationOptions}>
       <Stack.Screen
         options={{
-          title: 'Biblioteca',
+          title: texts.t('library_title'),
         }}
         name="librarystack"
         component={LibraryScreen}></Stack.Screen>
 
       <Stack.Screen
         options={{
-          title: 'Registrarse',
+          title: texts.t('register_text'),
         }}
         name="registerstack"
         component={RegisterScreen}></Stack.Screen>
@@ -132,7 +132,7 @@ function LibraryStack() {
         name="viewgamestats"
         component={ViewGameStats}></Stack.Screen>
       <Stack.Screen
-        options={{title: 'Añadir Juego'}}
+        options={{title: texts.t('add_game')}}
         name="addpersonalgame"
         component={AddPersonalGame}></Stack.Screen>
       <Stack.Screen

@@ -1,5 +1,10 @@
 {
   "game_title": "Games",
+  "add_game":"Add Game",
+  "new_comment":"New Comment",
+  "title_text":"Title",
+  "comment_text":"Comment",
+  "send_commnet":"Send Comment",
   "search_title": "Search",
   "library_title": "Library",
   "account_title": "Account",
@@ -8,5 +13,6 @@
   "password_fail_mesagge": "The password must have at least 6 characters, numbers and capital letters",
   "repeat_password_fail": "Passwords do not match",
   "email_exits": "Este correo ya esta en uso",
-  "error_login": "The email or password is incorrect"
+  "error_login": "The email or password is incorrect",
+  "load_messagge":"Loading..."
 }

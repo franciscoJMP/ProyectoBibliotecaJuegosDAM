@@ -15,6 +15,8 @@ import {
 } from 'ProyectoVideoJuegos/src/components';
 import ListGames from 'ProyectoVideoJuegos/src/components/GamesComponent/ListGames';
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 const database = firebase.database().ref('Juegos');
 const propiedadesDB = firebase.database().ref('Propiedades');
 
@@ -172,7 +174,7 @@ export default function MainScreen(props) {
   return networkInfo ? (
     <Fragment>
       {login === null && gamesList === null ? (
-        <LoadingComponent isVisible={true} text="Cargando..." />
+        <LoadingComponent isVisible={true} text={texts.t('load_message')} />
       ) : login ? (
         <Fragment>
           {gameFilterList === null || size(gameFilterList) > 0 ? (
@@ -323,7 +325,7 @@ const FilterModal = props => {
           textAlign: 'center',
           marginBottom: 20,
         }}>
-        Busqueda Avanzada
+        {texts.t('filter_title_head')}
       </Text>
       {gameCategories && gamePlatforms && (
         <Fragment>
@@ -332,11 +334,11 @@ const FilterModal = props => {
               fontWeight: 'bold',
               fontSize: 16,
             }}>
-            Categorias:
+            {texts.t('category_text')}:
           </Text>
           <DropDownPicker
             items={listCategories}
-            placeholder="Categorias"
+            placeholder={texts.t('category_text')}
             defaultValue="Todas"
             containerStyle={{width: '100%', height: 50, marginTop: 20}}
             style={{backgroundColor: '#fafafa'}}
@@ -349,12 +351,12 @@ const FilterModal = props => {
               fontWeight: 'bold',
               fontSize: 16,
             }}>
-            Plataformas:
+            {texts.t('platform_text')}:
           </Text>
           <DropDownPicker
             items={listPlatform}
             defaultValue="Todas"
-            placeholder="Plataformas"
+            placeholder={texts.t('platform_text')}
             containerStyle={{
               width: '100%',
               height: 50,
@@ -368,7 +370,7 @@ const FilterModal = props => {
         </Fragment>
       )}
       <Button
-        title="Aplicar Filtros"
+        title={texts.t('btn_filter_apply')}
         onPress={filtersGames}
         containerStyle={{marginTop: 20}}
         buttonStyle={styles.btn}></Button>
@@ -382,10 +384,10 @@ const NotFoundGames = props => {
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <Icon type="material-community" name="alert-outline" size={50} />
       <Text style={{fontSize: 20, fontWeight: 'bold'}}>
-        No se encontraron Juegos
+        {texts.t('not_found_games')}
       </Text>
       <Button
-        title="Recargar"
+        title={texts.t('btn_reload')}
         onPress={resetFilter}
         containerStyle={{marginTop: 20}}
         buttonStyle={styles.btn}></Button>

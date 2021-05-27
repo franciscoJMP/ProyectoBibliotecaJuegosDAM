@@ -17,6 +17,8 @@ import 'firebase/database';
 import {
   LoadingComponent,
   ModalComponent,
+  NotNetworkConnection,
+  NotFoundSolicitude,
 } from 'ProyectoVideoJuegos/src/components';
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
 const solicitudesDB = firebase.database().ref('Solicitudes');
@@ -69,7 +71,7 @@ export default function RequestView() {
   if (!users) {
     return <LoadingComponent isVisible={true} text="Cargando Solicitudes" />;
   }
-  if (users.length == 0) {
+  if (users.length === 0) {
     return (
       <View style={styles.viewBody}>
         <SearchBar
@@ -78,7 +80,7 @@ export default function RequestView() {
           value={search}
           containerStyle={StyleSheet.searchBar}
         />
-        
+        <NotFoundSolicitude />
       </View>
     );
   } else {

@@ -36,7 +36,9 @@ import {
   CarouselComponent,
 } from 'ProyectoVideoJuegos/src/components';
 import {items} from '../../components/AddGamesComponentForm/ageItems';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
 
+var texts = setI18nConfig();
 const database = firebase.database().ref('Juegos');
 const screenWidth = Dimensions.get('window').width;
 
@@ -220,7 +222,7 @@ export default function EditPersonalGame(props) {
   };
 
   if (!gameInfo || (!checkboxes && !checkboxesP) || !imagesSelected) {
-    return <LoadingComponent isVisible={true} text="Cargando..." />;
+    return <LoadingComponent isVisible={true} text={texts.t('load_message')} />;
   } else {
     return (
       <ScrollView style={styles.scrollView}>
@@ -346,14 +348,11 @@ const FormEditGames = props => {
     const arrayPlatforms = addArray(checkboxesP);
 
     if (!gameName || !gameDevelop || !gameDescription || !gameYear) {
-      toastRef.current.show(
-        'Todos los campos del formulario son obligatorios',
-        1500,
-      );
+      toastRef.current.show(texts.t('input_fail_mesagge'), 1500);
     } else if (size(imagesSelected) === 0) {
-      toastRef.current.show('Seleccione almenos una imagen');
+      toastRef.current.show(texts.t('err_imgselct'));
     } else if (size(arrayPlatforms) === 0 || size(arrayCategories) === 0) {
-      toastRef.current.show('Añada almenos una categoria y una plataforma');
+      toastRef.current.show(texts.t('err_catg_selected'));
     } else {
       setIsLoading(true);
       //Esta funcion nos devuelve una promesa con las URL de todas las imagenes
@@ -423,19 +422,19 @@ const FormEditGames = props => {
   return (
     <View style={styles.viewForm}>
       <Input
-        placeholder="Nombre"
+        placeholder={texts.t('placeholder_gameName')}
         containerStyle={styles.input}
         onChange={e => setGameName(e.nativeEvent.text)}
         defaultValue={gameName}
       />
       <Input
-        placeholder="Desarrollador"
+        placeholder={texts.t('placeholder_gameDevelop')}
         containerStyle={styles.input}
         onChange={e => setGameDevelop(e.nativeEvent.text)}
         defaultValue={gameDevelop}
       />
       <Input
-        placeholder="Descripción"
+        placeholder={texts.t('placeholder_gameDescription')}
         multiline={true}
         inputContainerStyle={styles.textArea}
         onChange={e => setGameDescription(e.nativeEvent.text)}
@@ -448,7 +447,7 @@ const FormEditGames = props => {
             {color: gameYear === '' ? '#969696' : 'black'},
           ]}
           onPress={showDatePicker}>
-          {gameYear !== '' ? gameYear : 'Fecha de publicación'}
+          {gameYear !== '' ? gameYear : texts.t('published_date')}
         </Text>
       </View>
       <DateTimePickerModal
@@ -470,25 +469,25 @@ const FormEditGames = props => {
         onChangeItem={item => setAge(item.value)}
       />
       <List.Accordion
-        title="Categorias"
+        title={texts.t('category_text')}
         expanded={expanded}
         onPress={handlePressC}>
         <CheckBoxes
           checkboxes={checkboxes}
           toggleCheckbox={toggleCheckbox}
-          text="Añadir Categoria"
+          text={texts.t('add_categoria')}
           type="c"
           selectComponent={selectComponent}
         />
       </List.Accordion>
       <List.Accordion
-        title="Plataformas"
+        title={texts.t('platform_text')}
         expanded={expandedP}
         onPress={handlePressP}>
         <CheckBoxes
           checkboxes={checkboxesP}
           toggleCheckbox={toggleCheckboxP}
-          text="Añadir Plataforma"
+          text={texts.t('add_platform')}
           type="p"
           selectComponent={selectComponent}
         />
@@ -500,10 +499,13 @@ const FormEditGames = props => {
       )}
       <Toast ref={toastRef} position="center" opacity={0.9} />
       <Button
-        title="Editar Juego"
+        title={texts.t('edit_game')}
         onPress={editGame}
         buttonStyle={styles.btnAddGame}></Button>
-      <LoadingComponent isVisible={isLoading} text="Editando Juego..." />
+      <LoadingComponent
+        isVisible={isLoading}
+        text={texts.t('editing_game') + '...'}
+      />
     </View>
   );
 };
@@ -533,15 +535,15 @@ const UploadImage = props => {
   };
   const removeImage = image => {
     Alert.alert(
-      'Eliminar imagen',
-      '¿Eliminar esta imagen?',
+      texts.t('delete_img_title'),
+      texts.t('delete_img_question'),
       [
         {
-          text: 'Cancelar',
+          text: texts.t('cancel_btn'),
           style: 'cancel',
         },
         {
-          text: 'Eliminar',
+          text: texts.t('delete_btn'),
           onPress: () => {
             setImagesSelected(
               //Filtra el array devolviendo todas las imagenes menos la seleccionada
@@ -618,7 +620,7 @@ const AddGamePlatform = props => {
   const onSubmit = () => {
     setError(null);
     if (!newPlatform) {
-      setError('La plataforma no puede estar vacia');
+      setError(texts.t('err_gamePlatform'));
     } else {
       setIsLoading(true);
       const auxCheckboxes = checkboxesP;
@@ -636,14 +638,14 @@ const AddGamePlatform = props => {
   return (
     <View style={styles.view}>
       <Input
-        placeholder="Plataforma"
+        placeholder={texts.t('placeholder_platform')}
         defaultValue={newPlatform && newPlatform}
         containerStyle={styles.input}
         onChange={e => setNewPlatform(e.nativeEvent.text)}
         errorMessage={error}
       />
       <Button
-        title="Añadir"
+        title={texts.t('add_sgText')}
         containerStyle={styles.btnContainer}
         buttonStyle={styles.btn}
         onPress={onSubmit}
@@ -660,7 +662,7 @@ const AddGameCategory = props => {
   const onSubmit = () => {
     setError(null);
     if (!newCategory) {
-      setError('La categoria no puede estar vacia');
+      setError(texts.t('err_void_categroy'));
     } else {
       setIsLoading(true);
       const auxCheckboxes = checkboxes;
@@ -686,7 +688,7 @@ const AddGameCategory = props => {
         errorMessage={error}
       />
       <Button
-        title="Añadir"
+        title={texts.t('add_sgText')}
         containerStyle={styles.btnContainer}
         buttonStyle={styles.btn}
         onPress={onSubmit}
