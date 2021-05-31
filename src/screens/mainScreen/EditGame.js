@@ -471,6 +471,12 @@ const FormEditGames = props => {
       />
       <List.Accordion
         title={texts.t('category_text')}
+        titleStyle={{
+          fontSize: 18,
+          fontWeight: 'bold',
+        }}
+        style={{marginBottom: 15}}
+        descriptionStyle={{width: '90%'}}
         expanded={expanded}
         onPress={handlePressC}>
         <CheckBoxes
@@ -483,6 +489,12 @@ const FormEditGames = props => {
       </List.Accordion>
       <List.Accordion
         title={texts.t('platform_text')}
+        titleStyle={{
+          fontSize: 18,
+          fontWeight: 'bold',
+        }}
+        style={{marginBottom: 15}}
+        descriptionStyle={{width: '90%'}}
         expanded={expandedP}
         onPress={handlePressP}>
         <CheckBoxes
@@ -536,15 +548,15 @@ const UploadImage = props => {
   };
   const removeImage = image => {
     Alert.alert(
-      'Eliminar imagen',
-      '¿Eliminar esta imagen?',
+      texts.t('delete_img_title'),
+      texts.t('delete_img_question'),
       [
         {
-          text: 'Cancelar',
+          text: texts.t('cancel_btn'),
           style: 'cancel',
         },
         {
-          text: 'Eliminar',
+          text: texts.t('delete_btn'),
           onPress: () => {
             setImagesSelected(
               //Filtra el array devolviendo todas las imagenes menos la seleccionada

@@ -471,6 +471,12 @@ const FormAdd = props => {
       />
       <List.Accordion
         title="Categorias"
+        titleStyle={{
+          fontSize: 18,
+          fontWeight: 'bold',
+        }}
+        style={{marginBottom: 15}}
+        descriptionStyle={{width: '90%'}}
         expanded={expanded}
         onPress={handlePressC}>
         <CheckBoxes
@@ -483,6 +489,12 @@ const FormAdd = props => {
       </List.Accordion>
       <List.Accordion
         title="Plataformas"
+        titleStyle={{
+          fontSize: 18,
+          fontWeight: 'bold',
+        }}
+        style={{marginBottom: 15}}
+        descriptionStyle={{width: '90%'}}
         expanded={expandedP}
         onPress={handlePressP}>
         <CheckBoxes

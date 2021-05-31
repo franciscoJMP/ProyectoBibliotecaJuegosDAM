@@ -17,16 +17,11 @@ import {
 export default function AccountScreen(props) {
   const [login, setLogin] = useState(null);
   const [networkInfo, setNetworkInfo] = useState(true);
+
   useEffect(() => {
     NetInfo.addEventListener(state => {
       setNetworkInfo(state.isInternetReachable);
     });
-    firebase.auth().onAuthStateChanged(user => {
-      !user ? setLogin(false) : setLogin(true);
-    });
-  }, []);
-
-  useEffect(() => {
     firebase.auth().onAuthStateChanged(user => {
       !user ? setLogin(false) : setLogin(true);
     });

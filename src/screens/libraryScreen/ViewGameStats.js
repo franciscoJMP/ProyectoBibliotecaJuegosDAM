@@ -32,6 +32,8 @@ import {
   ChangePrice,
 } from 'ProyectoVideoJuegos/src/components/ChangeGamesStats';
 import {items} from './items';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 
 const juegosDB = firebase.database().ref('Juegos');
 const bibliotecasDB = firebase.database().ref('Bibliotecas');
@@ -50,6 +52,7 @@ export default function ViewGameStats(props) {
   const [expandedPersonalInfo, setExpandedPersonalInfo] = useState(false); //Expandir acordeon de informacion Personal
   const [expandedCategoryGame, setExpandedCategoryGame] = useState(false);
   const [expandedPlatformGame, setExpandedPlatformGame] = useState(false);
+  const [expandedGeneralStats, setExpandedGeneralStats] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [renderComponent, setRenderComponent] = useState(null);
   const toastRef = useRef();
@@ -58,7 +61,6 @@ export default function ViewGameStats(props) {
   const truncateTitle = (str, n) => {
     return str.length > n ? str.substr(0, n - 1) + '...' : str;
   };
-
   useEffect(() => {
     navigation.setOptions({
       title: truncateTitle(gameName, 20),
@@ -98,8 +100,14 @@ export default function ViewGameStats(props) {
 
   const handlePressCategoryGame = () =>
     setExpandedCategoryGame(!expandedCategoryGame);
-  const handlePressPlatformGame = () =>
+
+  const handlePressPlatformGame = () => {
     setExpandedPlatformGame(!expandedPlatformGame);
+  };
+  const handlePressGeneralStatas = () => {
+    setExpandedGeneralStats(!expandedGeneralStats);
+  };
+
   const viewAddStats = () => {
     setRenderComponent(
       <AddGameStats
@@ -116,13 +124,15 @@ export default function ViewGameStats(props) {
     NetInfo.addEventListener(state => {
       setNetworkInfo(state.isInternetReachable);
     });
-    firebase.auth().onAuthStateChanged(user => {
-      !user ? setLogin(false) : setLogin(true);
-    });
   }, []);
 
   if (!gameInfo || !gamesLibraryInfo || !userInfo)
-    return <LoadingComponent isVisible={true} text="Cargando..." />;
+    return (
+      <LoadingComponent
+        isVisible={true}
+        text={texts.t('load_message') + '...'}
+      />
+    );
   return (
     <ScrollView vertical style={styles.viewBody}>
       <CarouselComponent
@@ -136,7 +146,7 @@ export default function ViewGameStats(props) {
         age={gameInfo.age}
       />
       <List.Accordion
-        title="Información General"
+        title={texts.t('general_info')}
         titleStyle={{
           fontSize: 18,
           fontWeight: 'bold',
@@ -150,9 +160,26 @@ export default function ViewGameStats(props) {
           navigation={navigation}
         />
       </List.Accordion>
+      {gameInfo.visibility === 'public' && (
+        <List.Accordion
+          title={texts.t('stats')}
+          titleStyle={{
+            fontSize: 18,
+            fontWeight: 'bold',
+          }}
+          expanded={expandedGeneralStats}
+          onPress={handlePressGeneralStatas}>
+          <GeneralStats
+            gameInfo={gameInfo}
+            age={gameInfo.age}
+            userInfo={userInfo}
+            navigation={navigation}
+          />
+        </List.Accordion>
+      )}
 
       <List.Accordion
-        title="Estadisticas"
+        title={texts.t('personal_stats')}
         titleStyle={{
           fontSize: 18,
           fontWeight: 'bold',
@@ -172,7 +199,7 @@ export default function ViewGameStats(props) {
       </List.Accordion>
 
       <List.Accordion
-        title="Categorias de Juego"
+        title={texts.t('game_categories')}
         titleStyle={{
           fontSize: 18,
           fontWeight: 'bold',
@@ -183,7 +210,7 @@ export default function ViewGameStats(props) {
       </List.Accordion>
 
       <List.Accordion
-        title="Plataformas de Juego"
+        title={texts.t('game_platform')}
         titleStyle={{
           fontSize: 18,
           fontWeight: 'bold',
@@ -196,7 +223,7 @@ export default function ViewGameStats(props) {
       </List.Accordion>
 
       <Button
-        title="Añadir Estadisticas"
+        title={texts.t('add_stats')}
         onPress={viewAddStats}
         buttonStyle={styles.btnAddGame}></Button>
 
@@ -230,12 +257,11 @@ const GameInfo = props => {
   const {
     gameYear,
     gameDevelop,
-    mainPlusExtra,
-    mainStory,
-    rating,
+
     createdBy,
     gameName,
     id,
+    visibility,
   } = gameInfo;
   const {userType} = userInfo;
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -258,11 +284,12 @@ const GameInfo = props => {
       imgAge = require('../../assets/img/pegi-icons/18.png');
       break;
   }
+
   return (
     <View style={styles.viewGameInfo}>
       <View style={styles.viewTextStats}>
         <Text style={[styles.titleInfoText, {paddingBottom: 10}]}>
-          Desarrolladora
+          {texts.t('develop_text')}
         </Text>
         <View style={{alignItems: 'center'}}>
           <Text style={{marginBottom: 10, fontSize: 18}}>{gameDevelop}</Text>
@@ -271,32 +298,13 @@ const GameInfo = props => {
 
       <View style={styles.viewTextStats}>
         <Text style={[styles.titleInfoText, {paddingBottom: 10}]}>
-          Fecha de salida
+          {texts.t('date_text')}
         </Text>
         <View style={{alignItems: 'center'}}>
           <Text style={{marginBottom: 10, fontSize: 18}}>{gameYear}</Text>
         </View>
       </View>
-      <View style={styles.viewTextStats}>
-        <Text style={[styles.titleInfoText, {paddingBottom: 10}]}>
-          Historia Principal
-        </Text>
-        <View style={{alignItems: 'center'}}>
-          <Text style={{marginBottom: 10, fontSize: 18}}>{mainStory}</Text>
-        </View>
-      </View>
-      <View style={styles.viewTextStats}>
-        <Text style={[styles.titleInfoText, {paddingBottom: 10}]}>
-          Completar el 100%
-        </Text>
-        <View style={{alignItems: 'center'}}>
-          <Text style={{marginBottom: 10, fontSize: 18}}>{mainPlusExtra}</Text>
-        </View>
-      </View>
 
-      {createdBy !== user && (
-        <Text style={styles.infosText}>Nota Media: {rating}/5</Text>
-      )}
       <View
         style={{
           flexDirection: 'row',
@@ -305,9 +313,9 @@ const GameInfo = props => {
         }}>
         <Image source={imgAge} resizeMode="contain" style={styles.logo} />
       </View>
-      {createdBy === user && (
+      {createdBy === user && visibility === 'private' && (
         <Button
-          title="Editar"
+          title={texts.t('edit_btn')}
           onPress={() => {
             navigation.navigate('editpersonalgame', {
               id: id,
@@ -317,6 +325,74 @@ const GameInfo = props => {
           disabled={isButtonDisabled}
           buttonStyle={styles.btnAddGame}></Button>
       )}
+    </View>
+  );
+};
+
+const GeneralStats = props => {
+  const {gameInfo} = props;
+  const {
+    mainPlusExtra,
+    mainStory,
+    rating,
+
+    full,
+    quantityStats,
+  } = gameInfo;
+
+  let main, extra, auxFull, roundRating;
+  main = Math.round(parseInt(mainStory) / parseInt(quantityStats));
+  extra = Math.round(parseInt(mainPlusExtra) / parseInt(quantityStats));
+  auxFull = Math.round(parseInt(full) / parseInt(quantityStats));
+  roundRating = Math.round(parseFloat(rating));
+  return (
+    <View style={styles.viewGameInfo}>
+      <View style={styles.viewTextStats}>
+        <Text style={[styles.titleInfoText, {paddingBottom: 10}]}>
+          {texts.t('stats_principal')}
+        </Text>
+        <View style={{alignItems: 'center'}}>
+          <Text style={{marginBottom: 10, fontSize: 18}}>
+            {mainStory === '0' || isNaN(main)
+              ? texts.t('no_stats')
+              : main + ' ' + texts.t('hours_text')}
+          </Text>
+        </View>
+      </View>
+      <View style={styles.viewTextStats}>
+        <Text style={[styles.titleInfoText, {paddingBottom: 10}]}>
+          {texts.t('stats_extra')}
+        </Text>
+        <View style={{alignItems: 'center'}}>
+          <Text style={{marginBottom: 10, fontSize: 18}}>
+            {mainPlusExtra === '0' || isNaN(extra)
+              ? texts.t('no_stats')
+              : extra + ' ' + texts.t('hours_text')}
+          </Text>
+        </View>
+      </View>
+      <View style={styles.viewTextStats}>
+        <Text style={[styles.titleInfoText, {paddingBottom: 10}]}>
+          {texts.t('stats_full')}
+        </Text>
+        <View style={{alignItems: 'center'}}>
+          <Text style={{marginBottom: 10, fontSize: 18}}>
+            {full === '0' || isNaN(auxFull)
+              ? texts.t('no_stats')
+              : auxFull + ' ' + texts.t('hours_text')}
+          </Text>
+        </View>
+      </View>
+      <View style={styles.viewTextStats}>
+        <Text style={[styles.titleInfoText, {paddingBottom: 10}]}>
+          {texts.t('avg_rating')}
+        </Text>
+        <View style={{alignItems: 'center'}}>
+          <Text style={{marginBottom: 10, fontSize: 18}}>
+            {rating > 0 ? roundRating + '/5' : texts.t('no_point')}
+          </Text>
+        </View>
+      </View>
     </View>
   );
 };
@@ -592,12 +668,13 @@ const Stats = props => {
           )}
         </View>
       </View>
-
-      <Button
-        title="Publicar Estadisticas"
-        onPress={uploadStats}
-        disabled={isButtonDisabled}
-        buttonStyle={styles.btnAddGame}></Button>
+      {gameInfo.visibility === 'public' && (
+        <Button
+          title="Publicar Estadisticas"
+          onPress={uploadStats}
+          disabled={isButtonDisabled}
+          buttonStyle={styles.btnAddGame}></Button>
+      )}
 
       <LoadingComponent isVisible={isLoading} text="Publicando Estadisticas" />
     </View>
@@ -741,7 +818,11 @@ const GameCategoryList = props => {
   const {gameInfo} = props;
   const {gameCategory} = gameInfo;
   return (
-    <ScrollView horizontal={true} style={{flex: 1, flexDirection: 'row'}}>
+    <ScrollView
+      horizontal={true}
+      style={{
+        flexDirection: 'row',
+      }}>
       {map(gameCategory, (gc, index) => (
         <View
           key={index}
@@ -760,7 +841,6 @@ const GamePlatformList = props => {
     <ScrollView
       horizontal={true}
       style={{
-        flex: 1,
         flexDirection: 'row',
       }}>
       {map(gamePlatform, (gp, index) => (

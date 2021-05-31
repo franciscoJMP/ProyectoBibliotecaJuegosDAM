@@ -129,7 +129,7 @@ export default function EditPersonalGame(props) {
         } else {
           setGameCategory(snapshot.val());
           const categories = [];
-
+          let resultIndex = 0;
           map(
             snapshot.val()[
               NativeModules.I18nManager.localeIdentifier === 'es_ES' ? 0 : 1
@@ -137,17 +137,35 @@ export default function EditPersonalGame(props) {
             (c, index) => {
               let checked = false;
               let categoriesGame = gameInfo.gameCategory;
+
               categoriesGame.forEach(category => {
                 if (category === c) checked = true;
               });
+
               const obj = {
                 id: index + 1,
                 title: c,
                 checked: checked,
               };
+
               categories.push(obj);
+              resultIndex = index + 1;
             },
           );
+
+          gameInfo.gameCategory.forEach(category => {
+            const find = categories.find(obj => obj.title === category);
+
+            if (find === undefined) {
+              const obj = {
+                id: resultIndex + 1,
+                title: category,
+                checked: true,
+              };
+              categories.push(obj);
+            }
+          });
+
           setCheckBoxes(categories);
         }
       });
@@ -182,6 +200,8 @@ export default function EditPersonalGame(props) {
         } else {
           setGamePlatform(snapshot.val());
           const platforms = [];
+          let resultIndex = 0;
+
           map(snapshot.val(), (p, index) => {
             let platformGame = gameInfo.gamePlatform;
             let checked = false;
@@ -194,7 +214,20 @@ export default function EditPersonalGame(props) {
               checked: checked,
             };
             platforms.push(obj);
+            resultIndex = index + 1;
           });
+          gameInfo.gamePlatform.forEach(data => {
+            const find = platforms.find(obj => obj.title === data);
+            if (find === undefined) {
+              const obj = {
+                id: resultIndex + 1,
+                title: data,
+                checked: true,
+              };
+              platforms.push(obj);
+            }
+          });
+
           setcheckboxesP(platforms);
         }
       });
@@ -470,6 +503,12 @@ const FormEditGames = props => {
       />
       <List.Accordion
         title={texts.t('category_text')}
+        titleStyle={{
+          fontSize: 18,
+          fontWeight: 'bold',
+        }}
+        style={{marginBottom: 15}}
+        descriptionStyle={{width: '90%'}}
         expanded={expanded}
         onPress={handlePressC}>
         <CheckBoxes
@@ -482,6 +521,12 @@ const FormEditGames = props => {
       </List.Accordion>
       <List.Accordion
         title={texts.t('platform_text')}
+        titleStyle={{
+          fontSize: 18,
+          fontWeight: 'bold',
+        }}
+        style={{marginBottom: 15}}
+        descriptionStyle={{width: '90%'}}
         expanded={expandedP}
         onPress={handlePressP}>
         <CheckBoxes

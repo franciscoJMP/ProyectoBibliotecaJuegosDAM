@@ -23,7 +23,8 @@ import {
   NotNetworkConnection,
 } from 'ProyectoVideoJuegos/src/components';
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
-import {color} from 'react-native-reanimated';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 
 const database = firebase.database().ref('Juegos');
 
@@ -95,9 +96,7 @@ export default function ViewGameInfo(props) {
 
   const addLibrary = () => {
     if (!userLogged) {
-      toastRef.current.show(
-        'Para añadir ese juego a tu biblioteca debes estar registrado',
-      );
+      toastRef.current.show(texts.t('message_addGame'));
     } else {
       const idUser = firebase.auth().currentUser.uid;
       const payload = {
@@ -116,22 +115,22 @@ export default function ViewGameInfo(props) {
         .child(idUser)
         .push(payload)
         .then(() => {
-          toastRef.current.show('Juego añadido a la biblioteca');
+          toastRef.current.show(texts.t('m_addGtoLibrary'));
           setIsFavourite(true);
         });
     }
   };
   const removeFromLibrary = () => {
     Alert.alert(
-      'Eliminar Juego de la biblioteca',
-      'Si elimina este juego perdera todas sus estadisticas personales',
+      texts.t('t_deleteGameLibrary'),
+      texts.t('m_deleteGameLibrary'),
       [
         {
-          text: 'Cancelar',
+          text: texts.t('cancel_btn'),
           style: 'cancel',
         },
         {
-          text: 'Eliminar',
+          text: texts.t('delete_btn'),
           onPress: () => {
             if (networkInfo) {
               const idUser = firebase.auth().currentUser.uid;
@@ -143,10 +142,10 @@ export default function ViewGameInfo(props) {
                 .remove()
                 .then(() => {
                   setIsFavourite(false);
-                  toastRef.current.show('Juego eliminado con exito', 1100);
+                  toastRef.current.show(texts.t('ok_removeGame'), 1100);
                 });
             } else {
-              toastRef.current.show('No tiene conexion a internet', 1100);
+              toastRef.current.show(texts.t('not_connection'), 1100);
             }
           },
         },
@@ -163,7 +162,12 @@ export default function ViewGameInfo(props) {
     setExpandedPlatformGame(!expandedPlatformGame);
 
   if (!gameInfo)
-    return <LoadingComponent isVisible={true} text="Cargando..." />;
+    return (
+      <LoadingComponent
+        isVisible={true}
+        text={texts.t('load_message') + '...'}
+      />
+    );
   return (
     <ScrollView vertical style={styles.viewBody}>
       <View style={styles.viewFavourites}>
@@ -188,7 +192,7 @@ export default function ViewGameInfo(props) {
       />
 
       <List.Accordion
-        title="Información General"
+        title={texts.t('general_info')}
         titleStyle={{
           fontSize: 18,
           fontWeight: 'bold',
@@ -199,7 +203,7 @@ export default function ViewGameInfo(props) {
       </List.Accordion>
 
       <List.Accordion
-        title="Estadisticas"
+        title={texts.t('stats')}
         titleStyle={{
           fontSize: 18,
           fontWeight: 'bold',
@@ -210,7 +214,7 @@ export default function ViewGameInfo(props) {
       </List.Accordion>
 
       <List.Accordion
-        title="Categorias de Juego"
+        title={texts.t('game_categories')}
         titleStyle={{
           fontSize: 18,
           fontWeight: 'bold',
@@ -221,7 +225,7 @@ export default function ViewGameInfo(props) {
       </List.Accordion>
 
       <List.Accordion
-        title="Plataformas de Juego"
+        title={texts.t('game_platform')}
         titleStyle={{
           fontSize: 18,
           fontWeight: 'bold',
@@ -297,28 +301,15 @@ const GameInfo = props => {
     <View style={styles.viewGameInfo}>
       <View style={styles.viewTextStatsAndInfo}>
         <Text style={styles.infosText}>
-          <Text style={styles.titleInfoText}>Desarroladora</Text> {'\n'}
+          <Text style={styles.titleInfoText}>{texts.t('develop_text')}</Text>{' '}
+          {'\n'}
           {gameDevelop}
         </Text>
       </View>
       <View style={styles.viewTextStatsAndInfo}>
         <Text style={styles.infosText}>
-          <Text style={styles.titleInfoText}>Fecha de salida</Text>
+          <Text style={styles.titleInfoText}>{texts.t('date_text')}</Text>
           {'\n'} {gameYear}
-        </Text>
-      </View>
-      <View style={styles.viewTextStatsAndInfo}>
-        <Text style={styles.infosText}>
-          <Text style={styles.titleInfoText}>Tiempo en pasar la campaña</Text>
-          {'\n'}
-          {mainStory}
-        </Text>
-      </View>
-      <View style={styles.viewTextStatsAndInfo}>
-        <Text style={styles.infosText}>
-          <Text style={styles.titleInfoText}>Tiempo en conseguir el 100%</Text>
-          {'\n'}
-          {mainPlusExtra}
         </Text>
       </View>
 
@@ -345,32 +336,32 @@ const Stats = props => {
     <View style={styles.viewGameInfo}>
       <View style={styles.viewTextStatsAndInfo}>
         <Text style={styles.infosText}>
-          <Text style={styles.titleInfoText}>Historia Principal</Text>
+          <Text style={styles.titleInfoText}>{texts.t('stats_principal')}</Text>
           {' \n'}
 
           <Text style={{textAlign: 'center'}}>
             {mainStory === '0' || isNaN(main)
-              ? 'Sin estadisticas'
-              : main + ' horas'}
+              ? texts.t('no_stats')
+              : main + ' ' + texts.t('hours_text')}
           </Text>
         </Text>
       </View>
       <View style={styles.viewTextStatsAndInfo}>
         <Text style={styles.infosText}>
-          <Text style={styles.titleInfoText}>Extras</Text>
+          <Text style={styles.titleInfoText}>{texts.t('stats_extra')}</Text>
           {' \n'}
           {mainPlusExtra === '0' || isNaN(extra)
-            ? 'Sin estadisticas'
-            : extra + ' horas'}
+            ? texts.t('no_stats')
+            : extra + ' ' + texts.t('hours_text')}
         </Text>
       </View>
       <View style={styles.viewTextStatsAndInfo}>
         <Text style={styles.infosText}>
-          <Text style={styles.titleInfoText}>Completar el 100%:</Text>
+          <Text style={styles.titleInfoText}>{texts.t('stats_full')}</Text>
           {' \n'}
           {full === '0' || isNaN(auxFull)
-            ? 'Sin estadisticas'
-            : auxFull + ' horas'}
+            ? texts.t('no_stats')
+            : auxFull + ' ' + texts.t('hours_text')}
         </Text>
       </View>
     </View>
@@ -381,7 +372,7 @@ const GameCategoryList = props => {
   const {gameInfo} = props;
   const {gameCategory} = gameInfo;
   return (
-    <ScrollView horizontal={true} style={{flex: 1, flexDirection: 'row'}}>
+    <ScrollView horizontal={true} style={{flexDirection: 'row'}}>
       {map(gameCategory, (gc, index) => (
         <View
           key={index}
@@ -400,7 +391,6 @@ const GamePlatformList = props => {
     <ScrollView
       horizontal={true}
       style={{
-        flex: 1,
         flexDirection: 'row',
       }}>
       {map(gamePlatform, (gp, index) => (

@@ -32,7 +32,7 @@ const juegosDB = firebase.database().ref('Juegos');
 const usuariosDB = firebase.database().ref('Usuarios');
 const propiedadesDB = firebase.database().ref('Propiedades');
 
-export default function LibraryComponent(props) {
+export default function LibraryComponent() {
   const [games, setGames] = useState(null);
   const [networkInfo, setNetworkInfo] = useState(true);
   const [savesGames, setSavesGames] = useState(null);
@@ -221,7 +221,7 @@ export default function LibraryComponent(props) {
           containerStyle={styles.btnContainer}
           onPress={() => navigation.navigate('addpersonalgame')}></Icon>
       </Fragment>
-      <Toast ref={toastRef} position="bottom" opacity={0.9} />
+      <Toast ref={toastRef} position="center" opacity={0.9} />
       <LoadingComponent text="Eliminando juego" isVisible={isLoading} />
     </View>
   );
@@ -353,6 +353,7 @@ const FilterModal = props => {
   }, []);
 
   const filtersGames = () => {
+
     setIsFilterActive(true);
     const thisSaveGames = [];
 
@@ -360,37 +361,45 @@ const FilterModal = props => {
       selectedState !== 'Todos'
         ? games.filter(game => game.gameState === selectedState)
         : games;
-    result.forEach(game => {
-      const thisGameCategory = game.gameCategory;
-      const thisGamePlatform = game.gamePlatform;
-      if (selectedCategory !== 'Todas' && selectedPlatform !== 'Todas') {
-        thisGameCategory.forEach(gc => {
-          if (gc === selectedCategory) {
+
+    console.log(result.length);
+
+    if (result.length > 0) {
+      result.forEach(game => {
+        const thisGameCategory = game.gameCategory;
+        const thisGamePlatform = game.gamePlatform;
+        if (selectedCategory !== 'Todas' && selectedPlatform !== 'Todas') {
+          thisGameCategory.forEach(gc => {
+            if (gc === selectedCategory) {
+              thisGamePlatform.forEach(gp => {
+                if (gp === selectedPlatform) {
+                  thisSaveGames.push(game);
+                }
+              });
+            }
+          });
+        } else if (
+          selectedCategory !== 'Todas' ||
+          selectedPlatform !== 'Todas'
+        ) {
+          if (selectedPlatform === 'Todas') {
+            thisGameCategory.forEach(gc => {
+              if (gc === selectedCategory) {
+                thisSaveGames.push(game);
+              }
+            });
+          } else {
             thisGamePlatform.forEach(gp => {
               if (gp === selectedPlatform) {
                 thisSaveGames.push(game);
               }
             });
           }
-        });
-      } else if (selectedCategory !== 'Todas' || selectedPlatform !== 'Todas') {
-        if (selectedPlatform === 'Todas') {
-          thisGameCategory.forEach(gc => {
-            if (gc === selectedCategory) {
-              thisSaveGames.push(game);
-            }
-          });
         } else {
-          thisGamePlatform.forEach(gp => {
-            if (gp === selectedPlatform) {
-              thisSaveGames.push(game);
-            }
-          });
+          thisSaveGames.push(game);
         }
-      } else {
-        thisSaveGames.push(game);
-      }
-    });
+      });
+    }
 
     if (thisSaveGames.length > 0) {
       setSavesGames(thisSaveGames);
@@ -399,6 +408,7 @@ const FilterModal = props => {
     } else {
       setIsFilterActive(false);
       setShowModal(false);
+    
       toastRef.current.show('No se encontraron juegos', 1100);
     }
 
