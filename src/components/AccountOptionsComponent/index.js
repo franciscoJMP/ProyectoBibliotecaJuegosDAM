@@ -13,8 +13,10 @@ import {
   ChangeEmailForm,
   ChangePasswordForm,
 } from '../ChangeUserDataForms';
-
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 const database = firebase.database();
+
 export default function AccountOptionsComponent(props) {
   const {userInfo, toastRef} = props;
   const [showModal, setShowModal] = useState(false);
@@ -90,7 +92,7 @@ export default function AccountOptionsComponent(props) {
     }
   };
   const addModSolicitude = () => {
-    setLoadingText('Enviando solicitud...');
+    setLoadingText(texts.t('sending_request') + '...');
     setIsLoading(true);
     let payloadSolicitude = {userId: user.uid, userEmail: user.email};
 
@@ -114,7 +116,7 @@ export default function AccountOptionsComponent(props) {
   };
 
   const cancelSolicitude = () => {
-    setLoadingText('Cancelando Solicitud...');
+    setLoadingText(texts.t('canceling_request') + '...');
     setIsLoading(true);
     let payloadUser = {sendSolicitude: false, keySolicitude: ''};
     firebase
@@ -181,7 +183,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
   if (type === 'normal') {
     if (provider !== 'google') {
       obj = {
-        title: 'Cambiar Nombre',
+        title: texts.t('user_option_change_name'),
         iconType: 'material-community',
         iconNameLeft: 'account-circle',
         iconColorLeft: '#ccc',
@@ -192,7 +194,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       options.push(obj);
 
       obj = {
-        title: 'Cambiar Email',
+        title: texts.t('user_option_change_mail'),
         iconType: 'material-community',
         iconNameLeft: 'at',
         iconColorLeft: '#ccc',
@@ -202,7 +204,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: 'Cambiar Telefono',
+        title: texts.t('user_option_change_phone'),
         iconType: 'material-community',
         iconNameLeft: 'phone',
         iconColorLeft: '#ccc',
@@ -212,7 +214,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: 'Cambiar Contraseña',
+        title: texts.t('user_option_change_pass'),
         iconType: 'material-community',
         iconNameLeft: 'lock-reset',
         iconColorLeft: '#ccc',
@@ -222,7 +224,9 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: !sendSolicitude ? 'Solicitar moderación' : 'Cancelar solicitud',
+        title: !sendSolicitude
+          ? texts.t('request_mod')
+          : texts.t('cancel_request'),
         iconType: 'material-community',
         iconNameLeft: !sendSolicitude
           ? 'email-send-outline'
@@ -238,7 +242,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       options.push(obj);
     } else {
       obj = {
-        title: 'Cambiar Nombre',
+        title: texts.t('user_option_change_name'),
         iconType: 'material-community',
         iconNameLeft: 'account-circle',
         iconColorLeft: '#ccc',
@@ -248,7 +252,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: 'Cambiar Telefono',
+        title: texts.t('user_option_change_phone'),
         iconType: 'material-community',
         iconNameLeft: 'phone',
         iconColorLeft: '#ccc',
@@ -258,7 +262,9 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: !sendSolicitude ? 'Solicitar Moderación' : 'Cancelar Moderacion',
+        title: !sendSolicitude
+          ? texts.t('request_mod')
+          : texts.t('cancel_request'),
         iconType: 'material-community',
         iconNameLeft: !sendSolicitude
           ? 'email-send-outline'
@@ -276,7 +282,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
   } else if (type == 'moderator') {
     if (provider !== 'google') {
       obj = {
-        title: 'Cambiar Nombre',
+        title: texts.t('user_option_change_name'),
         iconType: 'material-community',
         iconNameLeft: 'account-circle',
         iconColorLeft: '#ccc',
@@ -286,7 +292,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: 'Cambiar Email',
+        title: texts.t('user_option_change_mail'),
         iconType: 'material-community',
         iconNameLeft: 'at',
         iconColorLeft: '#ccc',
@@ -296,7 +302,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: 'Cambiar Telefono',
+        title: texts.t('user_option_change_phone'),
         iconType: 'material-community',
         iconNameLeft: 'phone',
         iconColorLeft: '#ccc',
@@ -306,7 +312,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: 'Cambiar Contraseña',
+        title: texts.t('user_option_change_pass'),
         iconType: 'material-community',
         iconNameLeft: 'lock-reset',
         iconColorLeft: '#ccc',
@@ -317,7 +323,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       options.push(obj);
 
       obj = {
-        title: 'Ver Solicitudes',
+        title: texts.t('user_option_view_request'),
         iconType: 'material-community',
         iconNameLeft: 'email-mark-as-unread',
         iconColorLeft: '#ccc',
@@ -328,7 +334,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       options.push(obj);
     } else {
       obj = {
-        title: 'Cambiar Nombre',
+        title: texts.t('user_option_change_name'),
         iconType: 'material-community',
         iconNameLeft: 'account-circle',
         iconColorLeft: '#ccc',
@@ -338,7 +344,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: 'Cambiar Telefono',
+        title: texts.t('user_option_change_phone'),
         iconType: 'material-community',
         iconNameLeft: 'phone',
         iconColorLeft: '#ccc',
@@ -348,7 +354,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: 'Ver Solicitudes',
+        title: texts.t('user_option_view_request'),
         iconType: 'material-community',
         iconNameLeft: 'email-mark-as-unread',
         iconColorLeft: '#ccc',
@@ -361,7 +367,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
   } else if (type === 'admin') {
     if (provider !== 'google') {
       obj = {
-        title: 'Cambiar Nombre',
+        title: texts.t('user_option_change_name'),
         iconType: 'material-community',
         iconNameLeft: 'account-circle',
         iconColorLeft: '#ccc',
@@ -371,7 +377,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: 'Cambiar Email',
+        title: texts.t('user_option_change_mail'),
         iconType: 'material-community',
         iconNameLeft: 'at',
         iconColorLeft: '#ccc',
@@ -381,7 +387,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: 'Cambiar Telefono',
+        title: texts.t('user_option_change_phone'),
         iconType: 'material-community',
         iconNameLeft: 'phone',
         iconColorLeft: '#ccc',
@@ -391,7 +397,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: 'Cambiar Contraseña',
+        title: texts.t('user_option_change_pass'),
         iconType: 'material-community',
         iconNameLeft: 'lock-reset',
         iconColorLeft: '#ccc',
@@ -401,7 +407,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: 'Administrar Usuarios',
+        title: texts.t('user_option_admin_user'),
         iconType: 'material-community',
         iconNameLeft: 'account-group',
         iconColorLeft: '#ccc',
@@ -411,7 +417,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: 'Ver Solicitudes',
+        title: texts.t('user_option_view_request'),
         iconType: 'material-community',
         iconNameLeft: 'email-mark-as-unread',
         iconColorLeft: '#ccc',
@@ -422,7 +428,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       options.push(obj);
     } else {
       obj = {
-        title: 'Cambiar Nombre',
+        title: texts.t('user_option_change_name'),
         iconType: 'material-community',
         iconNameLeft: 'account-circle',
         iconColorLeft: '#ccc',
@@ -432,7 +438,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: 'Cambiar Telefono',
+        title: texts.t('user_option_change_phone'),
         iconType: 'material-community',
         iconNameLeft: 'phone',
         iconColorLeft: '#ccc',
@@ -442,7 +448,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: 'Administrar Usuarios',
+        title: texts.t('user_option_admin_user'),
         iconType: 'material-community',
         iconNameLeft: 'email-mark-as-unread',
         iconColorLeft: '#ccc',
@@ -452,7 +458,7 @@ const generateOptions = (selectComponent, provider, type, sendSolicitude) => {
       };
       options.push(obj);
       obj = {
-        title: 'Ver Solicitudes',
+        title: texts.t('user_option_view_request'),
         iconType: 'material-community',
         iconNameLeft: 'email-mark-as-unread',
         iconColorLeft: '#ccc',

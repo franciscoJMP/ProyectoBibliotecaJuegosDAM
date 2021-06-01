@@ -4,6 +4,9 @@ import {Input, Button} from 'react-native-elements';
 import * as firebase from 'firebase';
 import 'firebase/database';
 import {styles} from './StylesChangeForms';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
+
 const database = firebase.database();
 export default function ChangePhoneNumberForm(props) {
   const {displayPhone, setShowModal, toastRef} = props;
@@ -35,14 +38,14 @@ export default function ChangePhoneNumberForm(props) {
           })
           .catch(() => {
             setIsLoading(false);
-            setError('Error al actualizar el numero');
+            setError(test.t('err_update_phone'));
           });
       });
   };
   return (
     <View style={styles.view}>
       <Input
-        placeholder="Numero"
+        placeholder={test.t('phone_text')}
         containerStyle={styles.input}
         rightIcon={{
           type: 'material-community',
@@ -56,7 +59,7 @@ export default function ChangePhoneNumberForm(props) {
         errorMessage={error}
       />
       <Button
-        title="Cambiar Numero"
+        title={test.t('user_option_change_phone')}
         containerStyle={styles.btnContainer}
         buttonStyle={styles.btn}
         onPress={onSubmit}

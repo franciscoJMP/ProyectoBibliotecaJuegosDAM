@@ -16,13 +16,15 @@ import 'firebase/storage';
 import 'firebase/database';
 import {
   LoadingComponent,
-  ModalComponent,
-  NotNetworkConnection,
   NotFoundSolicitude,
 } from 'ProyectoVideoJuegos/src/components';
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
+
 const solicitudesDB = firebase.database().ref('Solicitudes');
 const usuariosDB = firebase.database().ref('Usuarios');
+
 export default function RequestView() {
   const [search, setSearch] = useState('');
   const [users, setUsers] = useState(null);
@@ -69,13 +71,15 @@ export default function RequestView() {
     }
   }, [search]);
   if (!users) {
-    return <LoadingComponent isVisible={true} text="Cargando Solicitudes" />;
+    return (
+      <LoadingComponent isVisible={true} text={texts.t('loading_request')+"..."} />
+    );
   }
   if (users.length === 0) {
     return (
       <View style={styles.viewBody}>
         <SearchBar
-          placeholder="Buscar email"
+          placeholder={texts.t('find_email_msg')}
           onChangeText={e => setSearch(e)}
           value={search}
           containerStyle={StyleSheet.searchBar}
@@ -87,7 +91,7 @@ export default function RequestView() {
     return (
       <View style={styles.viewBody}>
         <SearchBar
-          placeholder="Buscar email"
+          placeholder={texts.t('find_email_msg')}
           onChangeText={e => setSearch(e)}
           value={search}
           containerStyle={StyleSheet.searchBar}

@@ -37,6 +37,8 @@ import {
 } from 'ProyectoVideoJuegos/src/components';
 import AddGameCategory from './AddGameCategory';
 import AddGamePlatform from './AddGamePlatform';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 
 LogBox.ignoreAllLogs();
 const database = firebase.database();
@@ -194,18 +196,13 @@ export default function AddGamesComponentForm(props) {
     const arrayPlatforms = addArray(checkboxesP);
 
     if (!gameName || !gameDevelop || !gameDescription || !gameYear) {
-      toastRef.current.show(
-        'Todos los campos del formulario son obligatorios',
-        1500,
-      );
+      toastRef.current.show(texts.t('input_fail_mesagge'), 1500);
     } else if (size(imagesSelected) === 0) {
-      toastRef.current.show('Seleccione almenos una imagen');
+      toastRef.current.show(texts.t('err_imgselct'));
     } else if (size(arrayPlatforms) === 0 || size(arrayCategories) === 0) {
-      toastRef.current.show('Añada almenos una categoria y una plataforma');
+      toastRef.current.show(texts.t('err_catg_selected'));
     } else if (selectDefault === '0') {
-      toastRef.current.show(
-        'Seleccione una clasificacion por edad para este titulo',
-      );
+      toastRef.current.show(texts.t('err_select_age'));
     } else {
       setIsLoading(true);
       //Esta funcion nos devuelve una promesa con las URL de todas las imagenes
@@ -305,7 +302,12 @@ export default function AddGamesComponentForm(props) {
   };
 
   if (!checkboxes && !checkboxesP)
-    return <LoadingComponent isVisible={true} text="Cargando..." />;
+    return (
+      <LoadingComponent
+        isVisible={true}
+        text={texts.t('load_message') + '...'}
+      />
+    );
   return (
     <ScrollView style={styles.scrollView}>
       <ImageGame imageGame={imagesSelected[0]} />
@@ -341,7 +343,7 @@ export default function AddGamesComponentForm(props) {
       />
 
       <Button
-        title="Crear Juego"
+        title={texts.t('create_game')}
         onPress={addGame}
         buttonStyle={styles.btnAddGame}></Button>
     </ScrollView>
@@ -426,17 +428,17 @@ const FormAdd = props => {
   return (
     <View style={styles.viewForm}>
       <Input
-        placeholder="Nombre"
+        placeholder={texts.t('placeholder_gameName')}
         containerStyle={styles.input}
         onChange={e => setGameName(e.nativeEvent.text)}
       />
       <Input
-        placeholder="Desarrollador"
+        placeholder={texts.t('placeholder_gameDevelop')}
         containerStyle={styles.input}
         onChange={e => setGameDevelop(e.nativeEvent.text)}
       />
       <Input
-        placeholder="Descripción"
+        placeholder={texts.t('placeholder_gameDescription')}
         multiline={true}
         inputContainerStyle={styles.textArea}
         onChange={e => setGameDescription(e.nativeEvent.text)}
@@ -449,7 +451,7 @@ const FormAdd = props => {
             {color: gameYear === '' ? '#969696' : 'black'},
           ]}
           onPress={showDatePicker}>
-          {gameYear !== '' ? gameYear : 'Fecha de publicación'}
+          {gameYear !== '' ? gameYear : texts.t('published_date')}
         </Text>
       </View>
       <DateTimePickerModal
@@ -470,7 +472,7 @@ const FormAdd = props => {
         onChangeItem={item => setSelectedDefault(item.value)}
       />
       <List.Accordion
-        title="Categorias"
+        title={texts.t('category_text')}
         titleStyle={{
           fontSize: 18,
           fontWeight: 'bold',
@@ -482,13 +484,13 @@ const FormAdd = props => {
         <CheckBoxes
           checkboxes={checkboxes}
           toggleCheckbox={toggleCheckbox}
-          text="Añadir Categoria"
+          text={texts.t('add_categoria')}
           type="c"
           selectComponent={selectComponent}
         />
       </List.Accordion>
       <List.Accordion
-        title="Plataformas"
+        title={texts.t('platform_text')}
         titleStyle={{
           fontSize: 18,
           fontWeight: 'bold',
@@ -500,7 +502,7 @@ const FormAdd = props => {
         <CheckBoxes
           checkboxes={checkboxesP}
           toggleCheckbox={toggleCheckboxP}
-          text="Añadir Plataforma"
+          text={texts.t('add_platform')}
           type="p"
           selectComponent={selectComponent}
         />
@@ -533,15 +535,15 @@ const UploadImage = props => {
   };
   const removeImage = image => {
     Alert.alert(
-      'Eliminar imagen',
-      '¿Eliminar esta imagen?',
+      texts.t('delete_img_title'),
+      texts.t('delete_img_question'),
       [
         {
-          text: 'Cancelar',
+          text: texts.t('cancel_btn'),
           style: 'cancel',
         },
         {
-          text: 'Eliminar',
+          text: texts.t('delete_btn'),
           onPress: () => {
             setImagesSelected(
               //Filtra el array devolviendo todas las imagenes menos la seleccionada

@@ -4,6 +4,9 @@ import {Input, Button} from 'react-native-elements';
 import * as firebase from 'firebase';
 import 'firebase/database';
 import {styles} from './StylesChangeForms';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
+
 const database = firebase.database();
 export default function ChangeDisplayNameForm(props) {
   const {displayName, setShowModal, toastRef} = props;
@@ -13,9 +16,9 @@ export default function ChangeDisplayNameForm(props) {
   const onSubmit = () => {
     setError(null);
     if (!newDisplayName) {
-      setError('El nombre no puede estar vacio');
+      setError(texts.t('err_new_display_name'));
     } else if (displayName === newDisplayName) {
-      setError('El nombre no puede ser igual al actual');
+      setError(texts.t('err_same_display_name'));
     } else {
       setIsLoading(true);
       const update = {
@@ -39,7 +42,7 @@ export default function ChangeDisplayNameForm(props) {
             })
             .catch(() => {
               setIsLoading(false);
-              setError('Error al actualizar el nombre');
+              setError(texts.t('err_update_name'));
             });
         });
     }
@@ -47,7 +50,7 @@ export default function ChangeDisplayNameForm(props) {
   return (
     <View style={styles.view}>
       <Input
-        placeholder="Nombre"
+        placeholder={texts.t('placeholder_gameName')}
         containerStyle={styles.input}
         rightIcon={{
           type: 'material-community',
@@ -59,7 +62,7 @@ export default function ChangeDisplayNameForm(props) {
         errorMessage={error}
       />
       <Button
-        title="Cambiar Nombre"
+        title={texts.t('user_option_change_name')}
         containerStyle={styles.btnContainer}
         buttonStyle={styles.btn}
         onPress={onSubmit}

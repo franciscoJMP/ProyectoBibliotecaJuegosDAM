@@ -61,7 +61,7 @@ export default function LoginForm(props) {
   return (
     <View style={styles.formContainer}>
       <Input
-        placeholder="Correo Electronico"
+        placeholder={texts.t('email_placeholder')}
         keyboardType="email-address"
         containerStyle={styles.inputForm}
         onChange={e => onChange(e, 'email')}
@@ -74,7 +74,7 @@ export default function LoginForm(props) {
         }
       />
       <Input
-        placeholder="Contraseña"
+        placeholder={texts.t('pass_placeholder')}
         containerStyle={styles.inputForm}
         password={true}
         secureTextEntry={showPassword ? false : true}
@@ -89,12 +89,15 @@ export default function LoginForm(props) {
         }
       />
       <Button
-        title="Iniciar Sesión"
+        title={texts.t('singin_text')}
         buttonStyle={styles.btnStyle}
         containerStyle={styles.btnContainer}
         onPress={onSubmit}
       />
-      <LoadingComponent isVisible={loading} text={'Iniciando Sesión'} />
+      <LoadingComponent
+        isVisible={loading}
+        text={texts.t('load_singing') + '...'}
+      />
     </View>
   );
 }

@@ -174,7 +174,7 @@ export default function MainScreen(props) {
   return networkInfo ? (
     <Fragment>
       {login === null && gamesList === null ? (
-        <LoadingComponent isVisible={true} text={texts.t('load_message')} />
+        <LoadingComponent isVisible={true} text={texts.t('load_message')+"..."} />
       ) : login ? (
         <Fragment>
           {gameFilterList === null || size(gameFilterList) > 0 ? (

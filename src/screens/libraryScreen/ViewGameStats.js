@@ -428,16 +428,16 @@ const Stats = props => {
   const uploadStats = () => {
     setIsButtonDisabled(true);
     Alert.alert(
-      '¿Publicar Estadisticas?',
-      'Las estadisticas son anonimas y lo unico que se añaden son las horas al conteo global',
+      texts.t('public_stats_title'),
+      texts.t('public_stats_msg'),
       [
         {
-          text: 'Cancelar',
+          text: texts.t('cancel_btn'),
           style: 'cancel',
           onPress: () => setIsButtonDisabled(false),
         },
         {
-          text: 'Publicar',
+          text: texts.t('public_btn'),
           onPress: () => {
             let mainTotal, plusExtraTotal, fullTotal, quantityStatsTotal;
             if (
@@ -446,10 +446,7 @@ const Stats = props => {
               parseInt(fullHours) <= 0
             ) {
               setIsButtonDisabled(false);
-              toastRef.current.show(
-                'No se pueden publicar estadisticas si hay alguna que valga 0',
-                1200,
-              );
+              toastRef.current.show(texts.t('public_stats_msg_err'), 1200);
             } else {
               setIsLoading(true);
               quantityStatsTotal = parseInt(quantityStats) + 1;
@@ -502,11 +499,11 @@ const Stats = props => {
     <View style={styles.viewGameInfo}>
       <View style={styles.viewTextStats}>
         <Text style={styles.infosText}>
-          <Text style={styles.titleInfoText}>Estado</Text>{' '}
+          <Text style={styles.titleInfoText}>{texts.t('state_text')}</Text>{' '}
         </Text>
         <View style={{alignItems: 'center'}}>
           <Text style={{marginBottom: 20}}>
-            {gameState === '' ? 'Sin estado' : gameState}{' '}
+            {gameState === '' ? texts.t('no_state') : gameState}{' '}
           </Text>
           {gameState !== '' && (
             <Icon
@@ -531,11 +528,13 @@ const Stats = props => {
 
       <View style={styles.viewTextStats}>
         <Text style={styles.infosText}>
-          <Text style={styles.titleInfoText}>Historia Principal</Text>{' '}
+          <Text style={styles.titleInfoText}>{texts.t('stats_principal')}</Text>{' '}
         </Text>
         <View style={{alignItems: 'center'}}>
           <Text style={{marginBottom: 20}}>
-            {mainHours === '' ? '0' : mainHours}
+            {mainHours === ''
+              ? texts.t('no_stats')
+              : mainHours + ' ' + texts.t('hours_text')}
           </Text>
           {mainHours !== '' && (
             <Icon
@@ -558,11 +557,13 @@ const Stats = props => {
       </View>
       <View style={styles.viewTextStats}>
         <Text style={styles.infosText}>
-          <Text style={styles.titleInfoText}>Extras</Text>
+          <Text style={styles.titleInfoText}>{texts.t('stats_extra')}</Text>
         </Text>
         <View style={{alignItems: 'center'}}>
           <Text style={{marginBottom: 20}}>
-            {plusExtra === '' ? '0' : plusExtra}
+            {plusExtra === ''
+              ? texts.t('no_stats')
+              : plusExtra + ' ' + texts.t('hours_text')}
           </Text>
           {plusExtra !== '' && (
             <Icon
@@ -586,11 +587,13 @@ const Stats = props => {
 
       <View style={styles.viewTextStats}>
         <Text style={styles.infosText}>
-          <Text style={styles.titleInfoText}>Completar el 100%</Text>
+          <Text style={styles.titleInfoText}>{texts.t('stats_full')}</Text>
         </Text>
         <View style={{alignItems: 'center'}}>
           <Text style={{marginBottom: 20}}>
-            {fullHours === '' ? 'Sin estadisticas' : fullHours}
+            {fullHours === ''
+              ? texts.t('no_stats')
+              : fullHours + ' ' + texts.t('hours_text')}
           </Text>
           {fullHours !== '' && (
             <Icon
@@ -614,11 +617,11 @@ const Stats = props => {
 
       <View style={styles.viewTextStats}>
         <Text style={styles.infosText}>
-          <Text style={styles.titleInfoText}>Precio</Text>
+          <Text style={styles.titleInfoText}>{texts.t('price_text')}</Text>
         </Text>
         <View style={{alignItems: 'center'}}>
           <Text style={{marginBottom: 20}}>
-            {price === '' ? 'Sin estadistica' : price + '€'}
+            {price === '' ? texts.t('no_price') : price + '€'}
           </Text>
           {price !== '' && (
             <Icon
@@ -642,11 +645,13 @@ const Stats = props => {
 
       <View style={styles.viewTextStats}>
         <Text style={styles.infosText}>
-          <Text style={styles.titleInfoText}>Plataforma</Text>
+          <Text style={styles.titleInfoText}>
+            {texts.t('placeholder_platform')}
+          </Text>
         </Text>
         <View style={{alignItems: 'center'}}>
           <Text style={{marginBottom: 20}}>
-            {gamePlatform === '' ? 'Sin Plataforma' : gamePlatform}
+            {gamePlatform === '' ? texts.t('no_platform') : gamePlatform}
           </Text>
           {gamePlatform !== '' && (
             <Icon
@@ -670,13 +675,16 @@ const Stats = props => {
       </View>
       {gameInfo.visibility === 'public' && (
         <Button
-          title="Publicar Estadisticas"
+          title={texts.t('btn_public_stats')}
           onPress={uploadStats}
           disabled={isButtonDisabled}
           buttonStyle={styles.btnAddGame}></Button>
       )}
 
-      <LoadingComponent isVisible={isLoading} text="Publicando Estadisticas" />
+      <LoadingComponent
+        isVisible={isLoading}
+        text={texts.t('posting_stats') + '...'}
+      />
     </View>
   );
 };
@@ -699,15 +707,15 @@ const AddGameStats = props => {
     let errorsTemp = {};
     if (!mainHours || !plusExtra || !fullHours || !price) {
       errorsTemp = {
-        mainHours: !mainHours ? 'Este campo no puede estar vacio' : '',
-        plusExtra: !plusExtra ? 'Este campo no puede estar vacio' : '',
-        fullHours: !fullHours ? 'Este campo no puede estar vacio' : '',
-        price: !price ? 'Este campo no puede estar vacio' : '',
+        mainHours: !mainHours ? texts.t('void_input_msg') : '',
+        plusExtra: !plusExtra ? texts.t('void_input_msg') : '',
+        fullHours: !fullHours ? texts.t('void_input_msg') : '',
+        price: !price ? texts.t('void_input_msg') : '',
       };
     } else if (gameState === '') {
-      toastRef.current.show('Seleccione un estado para este titulo');
+      toastRef.current.show(texts.t('stats_selected_error'));
     } else if (selectedPlatform === '') {
-      toastRef.current.show('Seleccione una plataforma de juego');
+      toastRef.current.show(texts.t('stats_selected_platform'));
     } else {
       setIsLoading(true);
       const user = firebase.auth().currentUser.uid;
@@ -744,7 +752,9 @@ const AddGameStats = props => {
     <ScrollView
       style={styles.view}
       contentContainerStyle={{alignItems: 'center'}}>
-      <Text style={{fontWeight: 'bold', fontSize: 20}}>Crear Estadisticas</Text>
+      <Text style={{fontWeight: 'bold', fontSize: 20}}>
+        {texts.t('add_stats')}
+      </Text>
       <DropDownPicker
         items={items}
         placeholder="Estado"
@@ -770,7 +780,7 @@ const AddGameStats = props => {
       />
 
       <Input
-        placeholder="Completar la historia principal"
+        placeholder={texts.t('stats_principal')}
         keyboardType="decimal-pad"
         maxLength={5}
         containerStyle={styles.input}
@@ -778,7 +788,7 @@ const AddGameStats = props => {
         errorMessage={error.mainHours}
       />
       <Input
-        placeholder="Completar los extras"
+        placeholder={texts.t('stats_extra')}
         containerStyle={styles.input}
         keyboardType="decimal-pad"
         maxLength={5}
@@ -786,7 +796,7 @@ const AddGameStats = props => {
         errorMessage={error.plusExtra}
       />
       <Input
-        placeholder="Completar el 100%"
+        placeholder={texts.t('stats_full')}
         containerStyle={styles.input}
         keyboardType="decimal-pad"
         maxLength={5}
@@ -794,7 +804,7 @@ const AddGameStats = props => {
         errorMessage={error.fullHours}
       />
       <Input
-        placeholder="Precio al que lo compraste"
+        placeholder={texts.t('price_placeholder')}
         containerStyle={styles.input}
         keyboardType="decimal-pad"
         maxLength={7}
@@ -803,7 +813,7 @@ const AddGameStats = props => {
       />
 
       <Button
-        title="Añadir"
+        title={texts.t('add_stats')}
         containerStyle={styles.btnContainer}
         buttonStyle={styles.btn}
         onPress={onSubmit}

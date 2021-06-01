@@ -6,8 +6,10 @@ import 'firebase/storage';
 import 'firebase/database';
 import RNFetchBlob from 'react-native-fetch-blob';
 import ImagePicker from 'react-native-image-crop-picker';
-
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
+
 LogBox.ignoreAllLogs();
 const database = firebase.database();
 export default function InfoUserComponent(props) {
@@ -33,7 +35,7 @@ export default function InfoUserComponent(props) {
         cropping: false,
         mediaType: 'photo',
       }).then(image => {
-        setLoadingText('Actualizando Imagen');
+        setLoadingText(texts.t('updating_img') + '...');
         setLoading(true);
         const imagePath = image.path;
         let uploadBlob = null;
@@ -127,7 +129,7 @@ export default function InfoUserComponent(props) {
           <Fragment>
             <Text style={userTextStyle}>{user.name}</Text>
             <Text>{user.email}</Text>
-            <Text>{user.phone ? user.phone : 'Sin Telefono'}</Text>
+            <Text>{user.phone ? user.phone : texts.t('no_phone')}</Text>
           </Fragment>
         ) : (
           <ActivityIndicator size="large" color="#1251E1" />
@@ -150,6 +152,7 @@ const styles = StyleSheet.create({
   },
   displayName: {
     fontWeight: 'bold',
+    color: 'black',
     paddingBottom: 5,
   },
   displayNameAdmin: {
