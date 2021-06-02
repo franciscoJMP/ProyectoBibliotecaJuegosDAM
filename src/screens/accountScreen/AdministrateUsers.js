@@ -1,15 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  ActivityIndicator,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
-import {Image, Icon, Button, SearchBar, ListItem} from 'react-native-elements';
+import {StyleSheet, Text, View, FlatList, Alert} from 'react-native';
+import {Icon, Button, SearchBar, ListItem} from 'react-native-elements';
 import Toast from 'react-native-easy-toast';
 import * as firebase from 'firebase';
 import 'firebase/storage';
@@ -19,6 +11,8 @@ import {
   ModalComponent,
 } from 'ProyectoVideoJuegos/src/components';
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 
 const usuariosDB = firebase.database().ref('Usuarios');
 export default function AdministrateUsers() {
@@ -57,11 +51,16 @@ export default function AdministrateUsers() {
   }, [search]);
 
   if (!users)
-    return <LoadingComponent isVisible={true} text="Cargando Usuarios" />;
+    return (
+      <LoadingComponent
+        isVisible={true}
+        text={texts.t('loading_user') + '...'}
+      />
+    );
   return (
     <View style={styles.viewBody}>
       <SearchBar
-        placeholder="Buscar email"
+        placeholder={texts.t('find_email_msg')}
         onChangeText={e => setSearch(e)}
         value={search}
         containerStyle={StyleSheet.searchBar}
@@ -93,12 +92,16 @@ const ListUsers = props => {
   const {email, name, uid, userType, photoURL} = user.item;
   const currentUser = firebase.auth().currentUser.email;
 
+  let thisPhotoUrl = '';
+
+  //controlo las fotos que no tiene contenido
+  if (photoURL !== undefined) {
+    thisPhotoUrl = photoURL;
+  }
+
   const updateUserType = () => {
     if (userType === 'normal') {
-      toastRef.current.show(
-        'Este usuario debe ser promovido por un moderador ',
-        1500,
-      );
+      toastRef.current.show(texts.t('msg_manageuser_one'), 1500);
     } else if (userType === 'moderator') {
       setRenderComponent(
         <OptionsModeratorUsers
@@ -109,10 +112,7 @@ const ListUsers = props => {
       );
       setShowModal(true);
     } else {
-      toastRef.current.show(
-        'Este usuario es administrador y no se puede gestionar ',
-        1500,
-      );
+      toastRef.current.show(texts.t('msg_manageuser_two'), 1500);
     }
   };
 
@@ -135,8 +135,8 @@ const ListUsers = props => {
         title={email}
         leftAvatar={{
           source:
-            photoURL !== ''
-              ? {uri: photoURL}
+            thisPhotoUrl !== ''
+              ? {uri: thisPhotoUrl}
               : require('../../assets/img/avatar-default.jpg'),
         }}
         rightIcon={
@@ -168,18 +168,18 @@ const OptionsModeratorUsers = props => {
   const userSetAdmin = () => {
     setIsLoading(true);
     Alert.alert(
-      '¿Promover al usuario ' + name + '?',
-      'Una vez promovido tendra control total y no podra ser eliminado',
+      texts.t('promote_msg_title') + ' ' + name + '?',
+      texts.t('promote_msg_text'),
       [
         {
-          text: 'Cancelar',
+          text: texts.t('cancel_btn'),
           style: 'cancel',
           onPress: () => {
             setIsLoading(false);
           },
         },
         {
-          text: 'Promover',
+          text: texts.t('btn_promote'),
           onPress: () => {
             let payload = {userType: 'admin'};
             usuariosDB
@@ -190,7 +190,11 @@ const OptionsModeratorUsers = props => {
                 setShowModal(false);
 
                 toastRef.current.show(
-                  'Usuario ' + name + ' promovido con exito',
+                  texts.t('promote_ok_msg_one') +
+                    ' ' +
+                    name +
+                    ' ' +
+                    texts.t('promote_ok_msg_two'),
                   1500,
                 );
               });
@@ -203,18 +207,22 @@ const OptionsModeratorUsers = props => {
   const userDeleteModerator = () => {
     setIsLoadingDelete(true);
     Alert.alert(
-      '¿Eliminar a ' + name + ' su permiso de moderador?',
-      'Podra ser promovido en cualquier momento',
+      texts.t('delete_userpermission_msg_one') +
+        ' ' +
+        name +
+        ' ' +
+        texts.t('delete_userpermission_msg_two'),
+      texts.t('delete_userpermission_msg_three'),
       [
         {
-          text: 'Cancelar',
+          text: texts.t('cancel_btn'),
           style: 'cancel',
           onPress: () => {
             setIsLoadingDelete(false);
           },
         },
         {
-          text: 'Eliminar',
+          text: texts.t('delete_btn'),
           onPress: () => {
             let payload = {userType: 'normal'};
             usuariosDB
@@ -224,10 +232,7 @@ const OptionsModeratorUsers = props => {
                 setIsLoadingDelete(false);
                 setShowModal(false);
 
-                toastRef.current.show(
-                  'Permiso de moderacion eliminado con exito',
-                  1500,
-                );
+                toastRef.current.show(texts.t('permission_complete_ok'), 1500);
               });
           },
         },
@@ -238,10 +243,10 @@ const OptionsModeratorUsers = props => {
   return (
     <View style={[styles.view, {height: '35%'}]}>
       <Text style={{fontWeight: 'bold', fontSize: 20}}>
-        Gestión usuario {name}
+        {texts.t('manage_user') + ' ' + name}
       </Text>
       <Button
-        title="Eliminar Moderación"
+        title={texts.t('delete_mod_permission')}
         containerStyle={styles.btnContainer}
         buttonStyle={styles.btn}
         disabled={isLoading}
@@ -249,7 +254,7 @@ const OptionsModeratorUsers = props => {
         loading={isLoadingDelete}
       />
       <Button
-        title="Promover a administrador"
+        title={texts.t('add_mod_permission')}
         containerStyle={styles.btnContainer}
         buttonStyle={styles.btn}
         disabled={isLoadingDelete}

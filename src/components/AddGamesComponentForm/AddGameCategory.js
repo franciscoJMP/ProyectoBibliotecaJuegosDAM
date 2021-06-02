@@ -5,6 +5,9 @@ import {Input, Button} from 'react-native-elements';
 import * as firebase from 'firebase';
 import 'firebase/database';
 import {styles} from '../ChangeUserDataForms/StylesChangeForms';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
+
 const database = firebase.database().ref('Propiedades').child('Categorias');
 
 export default function AddGameCategory(props) {
@@ -15,7 +18,7 @@ export default function AddGameCategory(props) {
   const onSubmit = () => {
     setError(null);
     if (!newCategory) {
-      setError('La categoria no puede estar vacia');
+      setError(texts.t('err_void_categroy'));
     } else {
       setIsLoading(true);
       const index =
@@ -32,14 +35,14 @@ export default function AddGameCategory(props) {
   return (
     <View style={styles.view}>
       <Input
-        placeholder="Categoria"
+        placeholder={texts.t('placeholder_category')}
         defaultValue={newCategory && newCategory}
         containerStyle={styles.input}
         onChange={e => setNewCategory(e.nativeEvent.text)}
         errorMessage={error}
       />
       <Button
-        title="Añadir"
+        title={texts.t('add_sgText')}
         containerStyle={styles.btnContainer}
         buttonStyle={styles.btn}
         onPress={onSubmit}

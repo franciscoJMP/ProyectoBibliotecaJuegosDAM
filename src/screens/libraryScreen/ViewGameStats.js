@@ -21,7 +21,6 @@ import {
   LoadingComponent,
   CarouselComponent,
   ModalComponent,
-  NotNetworkConnection,
 } from 'ProyectoVideoJuegos/src/components';
 import {
   ChangeMainHours,
@@ -757,7 +756,7 @@ const AddGameStats = props => {
       </Text>
       <DropDownPicker
         items={items}
-        placeholder="Estado"
+        placeholder={texts.t('state_text')}
         containerStyle={{width: '100%', height: 40, marginTop: 20}}
         style={{backgroundColor: '#fafafa'}}
         itemStyle={{
@@ -769,7 +768,7 @@ const AddGameStats = props => {
 
       <DropDownPicker
         items={listGamesPlatform}
-        placeholder="Plataformas"
+        placeholder={texts.t('platform_text')}
         containerStyle={{width: '100%', height: 40, marginTop: 20}}
         style={{backgroundColor: '#fafafa'}}
         itemStyle={{

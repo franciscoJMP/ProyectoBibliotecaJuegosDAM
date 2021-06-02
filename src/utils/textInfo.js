@@ -1,11 +1,10 @@
-const titleGuestAccount = 'Registrate para obtener todas las Ventajas';
-const textGuestAccount =
-  'Registrate en la app para poder acceder al perfil completo de usuario, asi como poder crear tu biblioteca de juegos ' +
-  '';
-const titleGuestLibrary = 'Registrate para crear tu biblioteca';
-const textGuestLibrary =
-  'Registrate en la app para poder crear tu biblioteca de juegos personalizada ' +
-  '';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
+
+const titleGuestAccount = texts.t('title_info_guest_account');
+const textGuestAccount = texts.t('text_info_guest_account') + ' ' + '';
+const titleGuestLibrary = texts.t('title_info_guest_library');
+const textGuestLibrary = texts.t('text_info_guest_library') + ' ' + '';
 
 export {
   titleGuestAccount,

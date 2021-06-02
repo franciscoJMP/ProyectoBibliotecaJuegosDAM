@@ -4,6 +4,9 @@ import {Input, Button} from 'react-native-elements';
 import * as firebase from 'firebase';
 import 'firebase/database';
 import {styles} from '../ChangeUserDataForms/StylesChangeForms';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
+
 const database = firebase.database().ref('Propiedades').child('Plataformas');
 
 export default function AddGamePlatform(props) {
@@ -14,7 +17,7 @@ export default function AddGamePlatform(props) {
   const onSubmit = () => {
     setError(null);
     if (!newPlatform) {
-      setError('La plataforma no puede estar vacia');
+      setError(texts.t('err_gamePlatform'));
     } else {
       setIsLoading(true);
       const auxPlatform = gamePlatform;
@@ -28,14 +31,14 @@ export default function AddGamePlatform(props) {
   return (
     <View style={styles.view}>
       <Input
-        placeholder="Plataforma"
+        placeholder={texts.t('placeholder_platform')}
         defaultValue={newPlatform && newPlatform}
         containerStyle={styles.input}
         onChange={e => setNewPlatform(e.nativeEvent.text)}
         errorMessage={error}
       />
       <Button
-        title="Añadir"
+        title={texts.t('add_sgText')}
         containerStyle={styles.btnContainer}
         buttonStyle={styles.btn}
         onPress={onSubmit}

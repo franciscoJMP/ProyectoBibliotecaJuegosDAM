@@ -10,6 +10,8 @@ import {map} from 'lodash';
 import * as firebase from 'firebase';
 import 'firebase/database';
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 
 const database = firebase.database();
 
@@ -81,7 +83,7 @@ export default function ListReviewComponent(props) {
     <View>
       {userLogger ? (
         <Button
-          title="Comentar"
+          title={texts.t('btn_comment')}
           buttonStyle={styles.addReview}
           titleStyle={styles.btnTitleReview}
           icon={{
@@ -93,7 +95,7 @@ export default function ListReviewComponent(props) {
             if (networkInfo) {
               navigation.navigate('addreviewgame', {idGame: idGame});
             } else {
-              toastRef.current.show('Sin conexion', 1300);
+              toastRef.current.show(texts.t('not_connection'), 1300);
             }
           }}
         />
@@ -102,9 +104,9 @@ export default function ListReviewComponent(props) {
           <Text
             style={styles.textStyle}
             onPress={() => navigation.navigate('accountScreen')}>
-            Para comentar necesitas estar registrado{'\n'}
+            {texts.t('msg_requeriment_comment') + '\n'}
             <Text style={{fontWeight: 'bold'}}>
-              pulsa AQUÍ para iniciar Sesión
+              {texts.t('msg_comment_click_here')}
             </Text>
           </Text>
         </View>
@@ -196,17 +198,17 @@ const Review = props => {
   const showEditIcon = showEditIconFunction();
   const deleteComment = () => {
     Alert.alert(
-      '¿Eliminar este comentario?',
-      'El comentario sera eliminado pero la nota globlal no se vera afectada',
+      texts.t('alert_delete_comment_title'),
+      texts.t('alert_delete_comment_msg'),
       [
         {
-          text: 'Cancelar',
+          text: texts.t('cancel_btn'),
           style: 'cancel',
         },
         {
-          text: 'Eliminar',
+          text: texts.t('delete_btn'),
           onPress: () => {
-            setLoadingText('Eliminando comentario...');
+            setLoadingText(texts.t('deleting_comment') + '...');
             setIsLoading(true);
             setTimeout(() => {
               if (networkInfo) {
@@ -217,14 +219,11 @@ const Review = props => {
                   .remove()
                   .then(() => {
                     setIsLoading(false);
-                    toastRef.current.show(
-                      'Comentario eliminado con exito',
-                      1300,
-                    );
+                    toastRef.current.show(texts.t('deleting_comment_ok'), 1300);
                   });
               } else {
                 setIsLoading(false);
-                toastRef.current.show('Sin conexión', 1300);
+                toastRef.current.show(texts.t('not_connection'), 1300);
               }
             }, 500);
           },
@@ -286,7 +285,7 @@ const Review = props => {
               networkInfo
                 ? editComment
                 : () => {
-                    toastRef.current.show('Sin conexión', 1300);
+                    toastRef.current.show(texts.t('not_connection'), 1300);
                   }
             }
           />
@@ -297,7 +296,9 @@ const Review = props => {
 
         <Text style={styles.reviewDate}>
           {createReview}
-          {isEdited && <Text style={{fontWeight: 'bold'}}> Editado </Text>}
+          {isEdited && (
+            <Text style={{fontWeight: 'bold'}}> {texts.t('edit_text')} </Text>
+          )}
         </Text>
       </View>
     </View>
@@ -331,17 +332,17 @@ const EditComment = props => {
     let tempError = {};
 
     if (newTitleReview === '') {
-      tempError = {title: 'El titulo no puede estar vacio'};
+      tempError = {title: texts.t('err_title_comment')};
     } else if (newReview === '') {
-      tempError = {comment: 'El comentario no puede estar vacio'};
+      tempError = {comment: texts.t('err_comment')};
     } else if (!networkInfo) {
       setThisIsLoading(false);
       setIsLoading(false);
       setShowModal(false);
-      toastRef.current.show('Sin conexión', 1300);
+      toastRef.current.show(texts.t('not_connection'), 1300);
     } else {
       setThisIsLoading(true);
-      setLoadingText('Editanto comentario...');
+      setLoadingText(texts.t('editing_comment') + '...');
       setIsLoading(true);
 
       let gameRating;
@@ -407,23 +408,31 @@ const EditComment = props => {
     <ScrollView
       style={styles.view}
       contentContainerStyle={{alignItems: 'center'}}>
-      <Text style={{fontWeight: 'bold', fontSize: 20}}>Editar Comentario</Text>
+      <Text style={{fontWeight: 'bold', fontSize: 20}}>
+        {texts.t('btn_edit_comment')}
+      </Text>
       <AirbnbRating
         count={5}
-        reviews={['Pésimo', 'Deficiente', 'Normal', 'Bueno', 'Muy Bueno']}
+        reviews={[
+          texts.t('review_state1'),
+          texts.t('review_state2'),
+          texts.t('review_state3'),
+          texts.t('review_state4'),
+          texts.t('review_state5'),
+        ]}
         defaultRating={rating}
         size={30}
         onFinishRating={value => setNewRaiting(value)}
       />
       <Input
-        placeholder="Titulo"
+        placeholder={texts.t('title_text')}
         style={styles.input}
         defaultValue={title}
         onChange={e => setNewTitleReview(e.nativeEvent.text)}
         errorMessage={error.title}
       />
       <Input
-        placeholder="Comentario..."
+        placeholder={texts.t('edit_comment_placeholder') + '...'}
         multiline={true}
         defaultValue={review}
         inputContainerStyle={styles.textArea}
@@ -432,7 +441,7 @@ const EditComment = props => {
       />
 
       <Button
-        title="Editar Comentario"
+        title={texts.t('btn_edit_comment')}
         containerStyle={styles.btnContainer}
         buttonStyle={styles.btn}
         onPress={editComment}

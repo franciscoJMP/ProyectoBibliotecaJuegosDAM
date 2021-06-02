@@ -3,6 +3,8 @@ import {StyleSheet, Text, View} from 'react-native';
 import {Input, Button} from 'react-native-elements';
 import * as firebase from 'firebase';
 import {styles} from './StylesChangeForms';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 
 const bibliotecasDB = firebase.database().ref('Bibliotecas');
 export default function ChangePrice(props) {
@@ -16,7 +18,7 @@ export default function ChangePrice(props) {
 
     if (newPrice === '') {
       errorsTemp = {
-        mainHours: !newPrice ? 'Este campo no puede estar vacio' : '',
+        mainHours: !newPrice ? texts.t('void_input_msg') : '',
       };
     } else {
       setIsLoading(true);
@@ -35,7 +37,7 @@ export default function ChangePrice(props) {
   return (
     <View style={styles.view}>
       <Input
-        placeholder="Actualizar Precio"
+        placeholder={texts.t('update_price')}
         containerStyle={styles.input}
         onChange={e => setNewPrice(e.nativeEvent.text)}
         errorMessage={errors.mainHours}
@@ -43,7 +45,7 @@ export default function ChangePrice(props) {
         maxLength={7}
       />
       <Button
-        title="Actualizar"
+        title={texts.t('btn_update')}
         containerStyle={styles.btnContainer}
         buttonStyle={styles.btn}
         onPress={onSubmit}

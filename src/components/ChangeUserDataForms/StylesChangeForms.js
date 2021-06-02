@@ -1,4 +1,4 @@
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
 export const styles = StyleSheet.create({
   view: {

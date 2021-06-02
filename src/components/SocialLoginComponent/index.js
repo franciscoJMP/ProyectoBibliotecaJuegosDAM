@@ -10,6 +10,8 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import {LoadingComponent} from 'ProyectoVideoJuegos/src/components';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 
 export default function SocialLoginComponent() {
   const [userInfo, setuserInfo] = useState([]);
@@ -88,7 +90,10 @@ export default function SocialLoginComponent() {
         color={GoogleSigninButton.Color.Dark}
         onPress={singIn}
       />
-      <LoadingComponent isVisible={loading} text={'Iniciando Sesión'} />
+      <LoadingComponent
+        isVisible={loading}
+        text={texts.t('load_singing') + '...'}
+      />
     </View>
   );
 }

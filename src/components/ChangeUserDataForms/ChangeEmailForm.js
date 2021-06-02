@@ -26,15 +26,15 @@ export default function ChangeEmailForm(props) {
     setErrors({});
     if (!formData.email || email === formData.email) {
       setErrors({
-        email: 'El correo es el mismo o esta vacio',
+        email: texts.t('err_samevoid_mail'),
       });
     } else if (!validateEmail(formData.email)) {
       setErrors({
-        email: 'Formato de correo incorrecto',
+        email: texts.t('err_mail_format'),
       });
     } else if (!formData.password) {
       setErrors({
-        password: 'La contraseña no puede estar vacia',
+        password: texts.t('err_form_empty_password'),
       });
     } else if (!validatePassword(formData.password)) {
       setErrors({
@@ -59,21 +59,21 @@ export default function ChangeEmailForm(props) {
                 })
                 .catch(() => {
                   setErrors({
-                    email: 'Error al actualizar el email',
+                    email: texts.t('err_to_update_email'),
                   });
                   setIsLoading(false);
                 }),
             )
             .catch(() => {
               setErrors({
-                email: 'Error al actualizar el email',
+                email: texts.t('err_to_update_email'),
               });
               setIsLoading(false);
             });
         })
         .catch(() => {
           setErrors({
-            password: 'La contraseña no es correcta',
+            password: texts.t('err_no_correct_password'),
           });
           setIsLoading(false);
         });
@@ -82,7 +82,7 @@ export default function ChangeEmailForm(props) {
   return (
     <View style={styles.view}>
       <Input
-        placeholder="Correo Electronico"
+        placeholder={texts.t('mail_form_placeholder')}
         containerStyle={styles.input}
         defaultValue={email}
         keyboardType="email-address"
@@ -95,7 +95,7 @@ export default function ChangeEmailForm(props) {
         errorMessage={errors.email}
       />
       <Input
-        placeholder="Contraseña"
+        placeholder={texts.t('pass_placeholder')}
         containerStyle={styles.input}
         password={true}
         secureTextEntry={showPassword ? false : true}
@@ -109,7 +109,7 @@ export default function ChangeEmailForm(props) {
         errorMessage={errors.password}
       />
       <Button
-        title="Cambiar Correo"
+        title={texts.t('btn_change_mail')}
         containerStyle={styles.btnContainer}
         buttonStyle={styles.btn}
         onPress={onSubmit}

@@ -75,7 +75,7 @@ export default function RegisterForm(props) {
   return (
     <View style={styles.formContainer}>
       <Input
-        placeholder="Correo Electronico"
+        placeholder={texts.t('mail_form_placeholder')}
         keyboardType="email-address"
         containerStyle={styles.inputForm}
         onChange={e => onChange(e, 'email')}
@@ -88,7 +88,7 @@ export default function RegisterForm(props) {
         }
       />
       <Input
-        placeholder="Nombre de usuario"
+        placeholder={texts.t('user_name_placeholder')}
         containerStyle={styles.inputForm}
         keyboardType="default"
         onChange={e => onChange(e, 'name')}
@@ -101,7 +101,7 @@ export default function RegisterForm(props) {
         }
       />
       <Input
-        placeholder="Telefono"
+        placeholder={texts.t('phone_placeholder')}
         keyboardType="phone-pad"
         maxLength={11}
         containerStyle={styles.inputForm}
@@ -115,7 +115,7 @@ export default function RegisterForm(props) {
         }
       />
       <Input
-        placeholder="Contraseña"
+        placeholder={texts.t('pass_placeholder')}
         containerStyle={styles.inputForm}
         password={true}
         secureTextEntry={showPassword ? false : true}
@@ -130,7 +130,7 @@ export default function RegisterForm(props) {
         }
       />
       <Input
-        placeholder="Repite la contraseña"
+        placeholder={texts.t('repeat_password_placeholder')}
         containerStyle={styles.inputForm}
         password={true}
         secureTextEntry={showRepeatPassword ? false : true}
@@ -145,13 +145,13 @@ export default function RegisterForm(props) {
         }
       />
       <Button
-        title="Registrarse"
+        title={texts.t('register_text')}
         buttonStyle={styles.btnStyle}
         containerStyle={styles.btnContainer}
         onPress={onSubmit}
       />
 
-      <LoadingComponent isVisible={loading} text={'Creando cuenta'} />
+      <LoadingComponent isVisible={loading} text={texts.t('creating_account')+"..."} />
     </View>
   );
 }

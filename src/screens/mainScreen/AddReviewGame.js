@@ -10,6 +10,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Toast from 'react-native-easy-toast';
 import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
 var texts = setI18nConfig();
+
 const database = firebase.database();
 export default function AddReviewGame(props) {
   const {navigation, route} = props;

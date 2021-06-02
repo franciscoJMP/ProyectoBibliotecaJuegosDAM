@@ -22,10 +22,11 @@ import {isEmpty} from 'lodash';
 import {
   LoadingComponent,
   ModalComponent,
-  NotNetworkConnection,
 } from 'ProyectoVideoJuegos/src/components';
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
 import {items} from '../../screens/libraryScreen/items';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 
 const bibliotecasDB = firebase.database().ref('Bibliotecas');
 const juegosDB = firebase.database().ref('Juegos');
@@ -60,7 +61,7 @@ export default function LibraryComponent() {
           snapshot.forEach(children => {
             const gameState =
               children.val().gameState === ''
-                ? 'No empezado'
+                ? texts.t('no_start')
                 : children.val().gameState;
             idGames.push({
               idGame: children.val().idGame,
@@ -166,14 +167,17 @@ export default function LibraryComponent() {
       <Fragment>
         <NotFoundGames navigation={navigation} />
         <Toast ref={toastRef} position="center" opacity={0.9} />
-        <LoadingComponent text="Eliminando juego" isVisible={isLoading} />
+        <LoadingComponent
+          text={texts.t('deleting_game') + '...'}
+          isVisible={isLoading}
+        />
       </Fragment>
     );
   }
   return (
     <View style={styles.viewBody}>
       <SearchBar
-        placeholder="Buscar Juego"
+        placeholder={texts.t('find_game')}
         onChangeText={e => setSearch(e)}
         value={search}
         containerStyle={StyleSheet.searchBar}
@@ -209,7 +213,9 @@ export default function LibraryComponent() {
       ) : (
         <View style={styles.loaderGames}>
           <ActivityIndicator size="large" />
-          <Text style={{textAlign: 'center'}}>Cargando Juegos...</Text>
+          <Text style={{textAlign: 'center'}}>
+            {texts.t('loading_games_library') + '...'}
+          </Text>
         </View>
       )}
       <Fragment>
@@ -222,7 +228,10 @@ export default function LibraryComponent() {
           onPress={() => navigation.navigate('addpersonalgame')}></Icon>
       </Fragment>
       <Toast ref={toastRef} position="center" opacity={0.9} />
-      <LoadingComponent text="Eliminando juego" isVisible={isLoading} />
+      <LoadingComponent
+        text={texts.t('deleting_game') + '...'}
+        isVisible={isLoading}
+      />
     </View>
   );
 }
@@ -232,7 +241,7 @@ const NotFoundGames = props => {
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <Icon type="material-community" name="alert-outline" size={50} />
       <Text style={{fontSize: 20, fontWeight: 'bold'}}>
-        No tienes juegos agregados
+        {texts.t('not_games_library')}
       </Text>
       <Fragment>
         <Icon
@@ -253,15 +262,15 @@ const Game = props => {
   const {uid} = userInfo;
   const confirmRemoveLibrary = () => {
     Alert.alert(
-      'Eliminar Juego de la biblioteca',
-      'Si elimina este juego perdera todas sus estadisticas personales',
+      texts.t('t_deleteGameLibrary'),
+      texts.t('m_deleteGameLibrary'),
       [
         {
-          text: 'Cancelar',
+          text: texts.t('cancel_btn'),
           style: 'cancel',
         },
         {
-          text: 'Eliminar',
+          text: texts.t('delete_btn'),
           onPress: () => {
             setIsLoading(true);
             const idUser = firebase.auth().currentUser.uid;
@@ -278,11 +287,11 @@ const Game = props => {
                     .remove()
                     .then(() => {
                       setIsLoading(false);
-                      toastRef.current.show('Juego eliminado con exito');
+                      toastRef.current.show(texts.t('ok_removeGame'));
                     });
                 } else {
                   setIsLoading(false);
-                  toastRef.current.show('Juego eliminado con exito');
+                  toastRef.current.show(texts.t('ok_removeGame'));
                 }
               });
           },
@@ -333,10 +342,12 @@ const FilterModal = props => {
     setRenderComponent,
     toastRef,
   } = props;
+  var all = texts.t('all_msg');
+  var alls = texts.t('alls_msg');
 
-  const [selectedCategory, setSelectedCategory] = useState('Todas');
-  const [selectedPlatform, setSelectedPlatform] = useState('Todas');
-  const [selectedState, setSelectedState] = useState('Todos');
+  const [selectedCategory, setSelectedCategory] = useState(all);
+  const [selectedPlatform, setSelectedPlatform] = useState(all);
+  const [selectedState, setSelectedState] = useState(alls);
   const [gamePlatforms, setGamePlatforms] = useState(null);
   const [gameCategories, setGameCategories] = useState(null);
 
@@ -353,12 +364,11 @@ const FilterModal = props => {
   }, []);
 
   const filtersGames = () => {
-
     setIsFilterActive(true);
     const thisSaveGames = [];
 
     const result =
-      selectedState !== 'Todos'
+      selectedState !== alls
         ? games.filter(game => game.gameState === selectedState)
         : games;
 
@@ -368,7 +378,7 @@ const FilterModal = props => {
       result.forEach(game => {
         const thisGameCategory = game.gameCategory;
         const thisGamePlatform = game.gamePlatform;
-        if (selectedCategory !== 'Todas' && selectedPlatform !== 'Todas') {
+        if (selectedCategory !== all && selectedPlatform !== all) {
           thisGameCategory.forEach(gc => {
             if (gc === selectedCategory) {
               thisGamePlatform.forEach(gp => {
@@ -378,11 +388,8 @@ const FilterModal = props => {
               });
             }
           });
-        } else if (
-          selectedCategory !== 'Todas' ||
-          selectedPlatform !== 'Todas'
-        ) {
-          if (selectedPlatform === 'Todas') {
+        } else if (selectedCategory !== all || selectedPlatform !== all) {
+          if (selectedPlatform === all) {
             thisGameCategory.forEach(gc => {
               if (gc === selectedCategory) {
                 thisSaveGames.push(game);
@@ -408,15 +415,15 @@ const FilterModal = props => {
     } else {
       setIsFilterActive(false);
       setShowModal(false);
-    
-      toastRef.current.show('No se encontraron juegos', 1100);
+
+      toastRef.current.show(texts.t('not_found_games'), 1100);
     }
 
     setRenderComponent(false);
   };
 
   const listCategories = [];
-  listCategories.push({label: 'Todas', value: 'Todas'});
+  listCategories.push({label: all, value: all});
 
   if (gameCategories !== null) {
     gameCategories.forEach(gc => {
@@ -426,14 +433,14 @@ const FilterModal = props => {
   }
 
   const listPlatform = [];
-  listPlatform.push({label: 'Todas', value: 'Todas'});
+  listPlatform.push({label: all, value: all});
   if (gamePlatforms !== null) {
     gamePlatforms.forEach(gp => {
       const obj = {label: gp, value: gp};
       listPlatform.push(obj);
     });
   }
-  const thisItems = [...items, {label: 'Todos', value: 'Todos'}];
+  const thisItems = [...items, {label: alls, value: alls}];
 
   return (
     <View style={{height: '85%'}}>
@@ -444,7 +451,7 @@ const FilterModal = props => {
           textAlign: 'center',
           marginBottom: 20,
         }}>
-        Busqueda Avanzada
+        {texts.t('filter_title_head')}
       </Text>
       {gameCategories && gamePlatforms && (
         <Fragment>
@@ -453,12 +460,12 @@ const FilterModal = props => {
               fontWeight: 'bold',
               fontSize: 16,
             }}>
-            Categorias:
+            {texts.t('category_text') + ':'}
           </Text>
           <DropDownPicker
             items={listCategories}
-            placeholder="Categorias"
-            defaultValue="Todas"
+            placeholder={texts.t('category_text')}
+            defaultValue={all}
             containerStyle={{width: '100%', height: 50, marginTop: 20}}
             style={{backgroundColor: '#fafafa'}}
             dropDownStyle={{backgroundColor: '#fafafa'}}
@@ -470,12 +477,12 @@ const FilterModal = props => {
               fontWeight: 'bold',
               fontSize: 16,
             }}>
-            Plataformas:
+            {texts.t('platform_text') + ':'}
           </Text>
           <DropDownPicker
             items={listPlatform}
-            defaultValue="Todas"
-            placeholder="Plataformas"
+            defaultValue={all}
+            placeholder={texts.t('platform_text')}
             containerStyle={{
               width: '100%',
               height: 50,
@@ -492,12 +499,12 @@ const FilterModal = props => {
               fontWeight: 'bold',
               fontSize: 16,
             }}>
-            Estado:
+            {texts.t('state_text') + ':'}
           </Text>
           <DropDownPicker
             items={thisItems}
-            placeholder="Estado"
-            defaultValue="Todos"
+            placeholder={texts.t('state_text')}
+            defaultValue={alls}
             containerStyle={{
               width: '100%',
               height: 50,
@@ -514,7 +521,7 @@ const FilterModal = props => {
         </Fragment>
       )}
       <Button
-        title="Aplicar Filtros"
+        title={texts.t('btn_filter_apply')}
         onPress={filtersGames}
         containerStyle={{marginTop: 20}}
         buttonStyle={styles.btn}></Button>

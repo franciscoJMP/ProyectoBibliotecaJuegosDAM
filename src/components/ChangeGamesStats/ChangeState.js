@@ -4,6 +4,8 @@ import {Input, Button} from 'react-native-elements';
 import DropDownPicker from 'react-native-dropdown-picker';
 import * as firebase from 'firebase';
 import {styles} from './StylesChangeForms';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 
 const bibliotecasDB = firebase.database().ref('Bibliotecas');
 export default function ChangeState(props) {
@@ -28,7 +30,7 @@ export default function ChangeState(props) {
     <View style={[styles.view, {height: '38%'}]}>
       <DropDownPicker
         items={items}
-        placeholder="Estado"
+        placeholder={texts.t('state_text')}
         defaultValue={gameState}
         containerStyle={{width: '100%', height: 60, marginTop: 20}}
         style={{backgroundColor: '#fafafa'}}
@@ -42,8 +44,8 @@ export default function ChangeState(props) {
       />
 
       <Button
-        title="Actualizar"
-        containerStyle={{marginTop: 50, width: '95%',height:300}}
+        title={texts.t('btn_update')}
+        containerStyle={{marginTop: 50, width: '95%', height: 300}}
         buttonStyle={styles.btn}
         onPress={onSubmit}
         loading={isLoading}

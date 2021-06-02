@@ -2,6 +2,8 @@ import React from 'react';
 import {StyleSheet, View, ScrollView, Text, Image} from 'react-native';
 import {Button} from 'react-native-elements';
 import {useNavigation} from '@react-navigation/native';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 
 export default function CreateAccountMensagge(props) {
   const navigation = useNavigation();
@@ -15,12 +17,15 @@ export default function CreateAccountMensagge(props) {
         style={styles.image}
       />
       <Text style={styles.title}>{title}</Text>
-      <Text style={styles.description}>{text}</Text>
+      <View style={{marginHorizontal: 4}}>
+        <Text style={styles.description}>{text}</Text>
+      </View>
+
       <View style={styles.btnView}>
         <Button
           buttonStyle={styles.btnStyle}
           containerStyle={styles.btnContainer}
-          title="Registrarse"
+          title={texts.t('register_text')}
           onPress={() =>
             navigation.navigate('accountScreen', {screen: 'loginscreen'})
           }
@@ -47,7 +52,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   description: {
+    fontSize: 16,
     textAlign: 'center',
+    marginLeft: 4,
     marginBottom: 20,
   },
   btnView: {

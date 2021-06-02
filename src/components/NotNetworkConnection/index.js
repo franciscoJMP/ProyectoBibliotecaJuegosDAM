@@ -10,7 +10,9 @@ export default function NotNetworkConnection(props) {
         name="wifi-strength-off-outline"
         size={50}
       />
-      <Text style={{fontSize: 20, fontWeight: 'bold'}}>Sin Conexión</Text>
+      <Text style={{fontSize: 20, fontWeight: 'bold'}}>
+        {texts.t('not_connection')}
+      </Text>
     </View>
   );
 }

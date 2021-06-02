@@ -1,9 +1,11 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {Input, Button} from 'react-native-elements';
+import {View} from 'react-native';
+import {Button} from 'react-native-elements';
 import DropDownPicker from 'react-native-dropdown-picker';
 import * as firebase from 'firebase';
 import {styles} from './StylesChangeForms';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 
 const bibliotecasDB = firebase.database().ref('Bibliotecas');
 export default function ChangePlatform(props) {
@@ -28,7 +30,7 @@ export default function ChangePlatform(props) {
       <DropDownPicker
         items={listGamesPlatform}
         defaultValue={newGamePlatform}
-        placeholder="Plataformas"
+        placeholder={texts.t('platform_text')}
         containerStyle={{width: '100%', height: 60, marginTop: 20}}
         globalTextStyle={{fontSize: 20, fontWeight: 'bold'}}
         style={{backgroundColor: '#fafafa'}}
@@ -40,7 +42,7 @@ export default function ChangePlatform(props) {
       />
 
       <Button
-        title="Actualizar"
+        title={texts.t('btn_update')}
         containerStyle={{marginTop: 50, width: '95%', height: 300}}
         buttonStyle={styles.btn}
         onPress={onSubmit}

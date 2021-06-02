@@ -3,6 +3,8 @@ import {StyleSheet, Text, View} from 'react-native';
 import {Input, Button} from 'react-native-elements';
 import * as firebase from 'firebase';
 import {styles} from './StylesChangeForms';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 
 const bibliotecasDB = firebase.database().ref('Bibliotecas');
 export default function ChangePlusExtra(props) {
@@ -16,7 +18,7 @@ export default function ChangePlusExtra(props) {
 
     if (newPlusExtra === '') {
       errorsTemp = {
-        mainHours: !newPlusExtra ? 'Este campo no puede estar vacio' : '',
+        mainHours: !newPlusExtra ? texts.t('void_input_msg') : '',
       };
     } else {
       setIsLoading(true);
@@ -35,14 +37,14 @@ export default function ChangePlusExtra(props) {
   return (
     <View style={styles.view}>
       <Input
-        placeholder="Actualizar Horas"
+        placeholder={texts.t('update_hours')}
         containerStyle={styles.input}
         onChange={e => setNewPlusExtra(e.nativeEvent.text)}
         errorMessage={errors.mainHours}
         value={newPlusExtra}
       />
       <Button
-        title="Actualizar"
+        title={texts.t('btn_update')}
         containerStyle={styles.btnContainer}
         buttonStyle={styles.btn}
         onPress={onSubmit}

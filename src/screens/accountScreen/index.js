@@ -13,6 +13,8 @@ import {
   titleGuestAccount,
   textGuestAccount,
 } from 'ProyectoVideoJuegos/src/utils/textInfo.js';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 
 export default function AccountScreen(props) {
   const [login, setLogin] = useState(null);
@@ -27,7 +29,12 @@ export default function AccountScreen(props) {
     });
   }, []);
   if (login === null) {
-    return <LoadingComponent isVisible={true} text="Cargando..." />;
+    return (
+      <LoadingComponent
+        isVisible={true}
+        text={texts.t('load_message') + '...'}
+      />
+    );
   } else {
     if (networkInfo) {
       return login ? (

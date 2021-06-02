@@ -37,8 +37,8 @@ import {
 } from 'ProyectoVideoJuegos/src/components';
 import {items} from '../../components/AddGamesComponentForm/ageItems';
 import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
-
 var texts = setI18nConfig();
+
 const database = firebase.database().ref('Juegos');
 const screenWidth = Dimensions.get('window').width;
 

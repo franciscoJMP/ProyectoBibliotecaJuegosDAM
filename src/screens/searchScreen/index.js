@@ -6,6 +6,9 @@ import NetInfo from '@react-native-community/netinfo';
 import 'firebase/storage';
 import 'firebase/database';
 import {NotNetworkConnection} from 'ProyectoVideoJuegos/src/components';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
+
 const juegosDB = firebase.database().ref('Juegos');
 
 export default function SearchScreen(props) {
@@ -51,7 +54,7 @@ export default function SearchScreen(props) {
     return (
       <View>
         <SearchBar
-          placeholder="Buscar Juego"
+          placeholder={texts.t('find_game')}
           onChangeText={e => setSearch(e)}
           value={search}
           containerStyle={StyleSheet.searchBar}

@@ -17,6 +17,7 @@ import ListGames from 'ProyectoVideoJuegos/src/components/GamesComponent/ListGam
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
 import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
 var texts = setI18nConfig();
+
 const database = firebase.database().ref('Juegos');
 const propiedadesDB = firebase.database().ref('Propiedades');
 
@@ -174,7 +175,10 @@ export default function MainScreen(props) {
   return networkInfo ? (
     <Fragment>
       {login === null && gamesList === null ? (
-        <LoadingComponent isVisible={true} text={texts.t('load_message')+"..."} />
+        <LoadingComponent
+          isVisible={true}
+          text={texts.t('load_message') + '...'}
+        />
       ) : login ? (
         <Fragment>
           {gameFilterList === null || size(gameFilterList) > 0 ? (
@@ -225,9 +229,10 @@ const FilterModal = props => {
     setIsFilterActive,
     setRenderComponent,
   } = props;
+  var all = texts.t('all_msg');
 
-  const [selectedCategory, setSelectedCategory] = useState('Todas');
-  const [selectedPlatform, setSelectedPlatform] = useState('Todas');
+  const [selectedCategory, setSelectedCategory] = useState(all);
+  const [selectedPlatform, setSelectedPlatform] = useState(all);
   const [gamePlatforms, setGamePlatforms] = useState(null);
   const [gameCategories, setGameCategories] = useState(null);
 
@@ -252,8 +257,8 @@ const FilterModal = props => {
           let gamePlatform = game.gamePlatform;
           let gameCategories = game.gameCategory;
           let foudGamePlatform, foundGameCategory;
-          if (selectedPlatform !== 'Todas') {
-            if (selectedCategory !== 'Todas') {
+          if (selectedPlatform !== all) {
+            if (selectedCategory !== all) {
               foudGamePlatform = gamePlatform.find(e => e === selectedPlatform);
               foundGameCategory = gameCategories.find(
                 e => e === selectedCategory,
@@ -273,7 +278,7 @@ const FilterModal = props => {
               }
             }
           } else {
-            if (selectedCategory !== 'Todas') {
+            if (selectedCategory !== all) {
               foundGameCategory = gameCategories.find(
                 e => e === selectedCategory,
               );
@@ -298,7 +303,7 @@ const FilterModal = props => {
   };
 
   const listCategories = [];
-  listCategories.push({label: 'Todas', value: 'Todas'});
+  listCategories.push({label: all, value: all});
 
   if (gameCategories !== null) {
     gameCategories.forEach(gc => {
@@ -308,7 +313,7 @@ const FilterModal = props => {
   }
 
   const listPlatform = [];
-  listPlatform.push({label: 'Todas', value: 'Todas'});
+  listPlatform.push({label: all, value: all});
   if (gamePlatforms !== null) {
     gamePlatforms.forEach(gp => {
       const obj = {label: gp, value: gp};

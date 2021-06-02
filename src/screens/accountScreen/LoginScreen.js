@@ -12,6 +12,8 @@ import {
   ModalComponent,
 } from 'ProyectoVideoJuegos/src/components';
 import {validateEmail} from 'ProyectoVideoJuegos/src/utils/validations';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 
 export default function LoginScreen() {
   const [showModal, setShowModal] = useState(false);
@@ -50,11 +52,11 @@ function CreateAccount(props) {
   return (
     <Fragment>
       <Text style={styles.textRegister}>
-        ¿Aún no tienes una cuenta?{' '}
+        {texts.t('login_screen_msg_one') + ' '}
         <Text
           style={styles.btnRegister}
           onPress={() => navigation.navigate('registerscreen')}>
-          Regístrate
+          {texts.t('login_screen_msg_two')}
         </Text>
       </Text>
 
@@ -67,7 +69,7 @@ function CreateAccount(props) {
               <ForggotenForm toastRef={toastRef} setShowModal={setShowModal} />,
             );
           }}>
-          ¿Ha olvidado su contraseña?
+          {texts.t('login_screen_forgot_pass')}
         </Text>
       </Text>
     </Fragment>
@@ -82,11 +84,11 @@ const ForggotenForm = props => {
     setErrors({});
     if (email === '') {
       setErrors({
-        email: 'El campo no puede estar vacio',
+        email: texts.t('forggotenForm_err_empty_input'),
       });
     } else if (!validateEmail(email)) {
       setErrors({
-        email: 'Formato de correo incorrecto',
+        email: texts.t('err_mail_format'),
       });
     } else {
       setIsLoading(true);
@@ -96,7 +98,7 @@ const ForggotenForm = props => {
         .then(() => {
           setIsLoading(false);
           setShowModal(false);
-          toastRef.current.show('Correo de recuperacion enviado');
+          toastRef.current.show(texts.t('msg_send_recovery_email'));
         })
         .catch(e => console.log(e));
     }
@@ -104,7 +106,7 @@ const ForggotenForm = props => {
   return (
     <View style={styles.view}>
       <Input
-        placeholder="Correo Electronico"
+        placeholder={texts.t('email_placeholder')}
         containerStyle={styles.input}
         defaultValue={email}
         keyboardType="email-address"
@@ -118,7 +120,7 @@ const ForggotenForm = props => {
       />
 
       <Button
-        title="Enviar enlace de acceso"
+        title={texts.t('send_email_access')}
         containerStyle={styles.btnContainer}
         buttonStyle={styles.btn}
         onPress={onSubmit}

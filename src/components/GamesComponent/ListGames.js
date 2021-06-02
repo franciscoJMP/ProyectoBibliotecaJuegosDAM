@@ -14,6 +14,8 @@ import * as firebase from 'firebase';
 import 'firebase/database';
 import {LoadingComponent} from 'ProyectoVideoJuegos/src/components';
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 
 const database = firebase.database();
 export default function ListGames(props) {
@@ -57,15 +59,15 @@ const GamesRender = props => {
   };
   const deleteGame = id => {
     Alert.alert(
-      'Eliminar Juego',
-      '¿Eliminar este Juego?',
+      texts.t('delete_gameList_title'),
+      texts.t('delete_gameList_text'),
       [
         {
-          text: 'Cancelar',
+          text: texts.t('cancel_btn'),
           style: 'cancel',
         },
         {
-          text: 'Eliminar',
+          text: texts.t('delete_btn'),
           onPress: () => {
             setIsLoadingComponent(true);
             deleteComent(id).then(response => {

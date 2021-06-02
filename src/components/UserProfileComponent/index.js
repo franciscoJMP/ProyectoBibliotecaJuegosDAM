@@ -13,6 +13,8 @@ import LoadingComponent from '../LoadingComponent';
 import InfoUserComponent from '../InfoUserComponent';
 import AccountOptionsComponent from '../AccountOptionsComponent';
 import {colors} from 'ProyectoVideoJuegos/src/styles/withColors';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 
 export default function UserProfileComponent(props) {
   const [userInfo, setuserInfo] = useState(null);
@@ -42,7 +44,7 @@ export default function UserProfileComponent(props) {
       )}
 
       <Button
-        title="Cerrar Sesion"
+        title={texts.t('btn_signout')}
         buttonStyle={styles.btnCloseSession}
         titleStyle={styles.btCloseSessionText}
         onPress={() => firebase.auth().signOut()}

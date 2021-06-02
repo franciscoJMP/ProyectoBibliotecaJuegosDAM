@@ -13,39 +13,44 @@ export default function ChangePhoneNumberForm(props) {
   const [newDisplayPhone, setNewDisplayPhone] = useState(displayPhone);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
   const onSubmit = () => {
     setError(null);
+    if (!newDisplayPhone) {
+      setError(texts.t('forggotenForm_err_empty_input'));
+    } else {
+      setIsLoading(true);
+      const update = {
+        phoneNumber: newDisplayPhone,
+      };
+      const updateRealTime = {
+        phone: newDisplayPhone,
+      };
 
-    setIsLoading(true);
-    const update = {
-      phoneNumber: newDisplayPhone,
-    };
-    const updateRealTime = {
-      phone: newDisplayPhone,
-    };
-    const user = firebase.auth().currentUser;
-    firebase
-      .auth()
-      .currentUser.updateProfile(update)
-      .then(() => {
-        database
-          .ref('Usuarios')
-          .child(user.uid)
-          .update(updateRealTime)
-          .then(() => {
-            setIsLoading(false);
-            setShowModal(false);
-          })
-          .catch(() => {
-            setIsLoading(false);
-            setError(test.t('err_update_phone'));
-          });
-      });
+      const user = firebase.auth().currentUser;
+      firebase
+        .auth()
+        .currentUser.updateProfile(update)
+        .then(() => {
+          database
+            .ref('Usuarios')
+            .child(user.uid)
+            .update(updateRealTime)
+            .then(() => {
+              setIsLoading(false);
+              setShowModal(false);
+            })
+            .catch(() => {
+              setIsLoading(false);
+              setError(texts.t('err_update_phone'));
+            });
+        });
+    }
   };
   return (
     <View style={styles.view}>
       <Input
-        placeholder={test.t('phone_text')}
+        placeholder={texts.t('phone_text')}
         containerStyle={styles.input}
         rightIcon={{
           type: 'material-community',
@@ -59,7 +64,7 @@ export default function ChangePhoneNumberForm(props) {
         errorMessage={error}
       />
       <Button
-        title={test.t('user_option_change_phone')}
+        title={texts.t('user_option_change_phone')}
         containerStyle={styles.btnContainer}
         buttonStyle={styles.btn}
         onPress={onSubmit}

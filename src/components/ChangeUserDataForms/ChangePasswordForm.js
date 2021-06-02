@@ -9,6 +9,7 @@ import {validatePassword} from 'ProyectoVideoJuegos/src/utils/validations';
 import {reauthenticate} from 'ProyectoVideoJuegos/src/utils/api';
 import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
 var texts = setI18nConfig();
+
 export default function ChangePasswordForm(props) {
   const {setShowModal, toastRef} = props;
   const [formData, setFormData] = useState(defaultFormData);
@@ -28,27 +29,23 @@ export default function ChangePasswordForm(props) {
       !formData.repeatNewPassword
     ) {
       errorsTemp = {
-        password: !formData.password
-          ? 'La contraseña no puede estar vacia.'
-          : '',
+        password: !formData.password ? texts.t('err_form_empty_password') : '',
         newPassword: !formData.newPassword
-          ? 'La contraseña no puede estar vacia.'
+          ? texts.t('err_form_empty_password')
           : '',
         repeatNewPassword: !formData.repeatNewPassword
-          ? 'La contraseña no puede estar vacia.'
+          ? texts.t('err_form_empty_password')
           : '',
       };
     } else if (formData.newPassword !== formData.repeatNewPassword) {
       errorsTemp = {
-        newPassword: 'Las contraseñas no son iguales.',
-        repeatNewPassword: 'Las contraseñas no son iguales.',
+        newPassword: texts.t('err_form_equals_password'),
+        repeatNewPassword: texts.t('err_form_equals_password'),
       };
     } else if (!validatePassword(formData.newPassword)) {
       errorsTemp = {
-        newPassword:
-          'La contraseña tiene que ser mayor a 6 caracteres y contener mayusculas y minusculas',
-        repeatNewPassword:
-          'La contraseña tiene que ser mayor a 6 caracteres y contener mayusculas y minusculas',
+        newPassword: texts.t('err_form_equals_password'),
+        repeatNewPassword: texts.t('err_form_equals_password'),
       };
     } else {
       await reauthenticate(formData.password)
@@ -65,7 +62,7 @@ export default function ChangePasswordForm(props) {
             })
             .catch(() => {
               errorsTemp = {
-                other: 'Error al actualizar la contraseña',
+                other: texts.t('err_update_password'),
               };
               setIsLoading(false);
             });
@@ -74,7 +71,7 @@ export default function ChangePasswordForm(props) {
           console.log(error);
           setIsLoading(false);
           errorsTemp = {
-            password: 'La contraseña no es correcta',
+            password: texts.t('err_no_correct_password'),
           };
         });
     }
@@ -83,7 +80,7 @@ export default function ChangePasswordForm(props) {
   return (
     <View style={styles.view}>
       <Input
-        placeholder="Contraseña Actual"
+        placeholder={texts.t('password_form_placeholder')}
         containerStyle={styles.input}
         password={true}
         secureTextEntry={showPassword ? false : true}
@@ -97,7 +94,7 @@ export default function ChangePasswordForm(props) {
         errorMessage={errors.password}
       />
       <Input
-        placeholder="Nueva Contraseña"
+        placeholder={texts.t('new_password_placeholder')}
         containerStyle={styles.input}
         password={true}
         secureTextEntry={showPassword ? false : true}
@@ -111,7 +108,7 @@ export default function ChangePasswordForm(props) {
         errorMessage={errors.newPassword}
       />
       <Input
-        placeholder="Repetir "
+        placeholder={texts.t('repeat_password_placeholder')}
         containerStyle={styles.input}
         password={true}
         secureTextEntry={showPassword ? false : true}
@@ -125,7 +122,7 @@ export default function ChangePasswordForm(props) {
         onChange={e => onChange(e, 'repeatNewPassword')}
       />
       <Button
-        title="Cambiar Contraseña"
+        title={texts.t('btn_change_password')}
         containerStyle={styles.btnContainer}
         buttonStyle={styles.btn}
         onPress={onSubmit}
