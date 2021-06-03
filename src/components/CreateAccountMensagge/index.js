@@ -16,8 +16,9 @@ export default function CreateAccountMensagge(props) {
         resizeMode="contain"
         style={styles.image}
       />
-      <Text style={styles.title}>{title}</Text>
-      <View style={{marginHorizontal: 4}}>
+
+      <View style={{marginHorizontal: 6}}>
+        <Text style={styles.title}>{title}</Text>
         <Text style={styles.description}>{text}</Text>
       </View>
 
