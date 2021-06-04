@@ -69,6 +69,7 @@ export default function ViewGameInfo(props) {
       if (snapshot.exists()) setRating(snapshot.val().rating);
     });
   }, []);
+
   useEffect(() => {
     if (userLogged && gameInfo) {
       const idUser = firebase.auth().currentUser.uid;

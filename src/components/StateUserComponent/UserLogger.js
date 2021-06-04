@@ -5,9 +5,9 @@ import {
   LibraryComponent,
 } from 'ProyectoVideoJuegos/src/components';
 export default function UserLogger(props) {
-  const {type} = props;
+  const {type, navigation} = props;
   if (type === 'account') {
-    return <UserProfileComponent />;
+    return <UserProfileComponent navigation={navigation} />;
   } else {
     return <LibraryComponent />;
   }

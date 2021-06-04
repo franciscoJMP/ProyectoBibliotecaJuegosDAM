@@ -38,7 +38,7 @@ export default function AccountScreen(props) {
   } else {
     if (networkInfo) {
       return login ? (
-        <UserLogger type="account" />
+        <UserLogger type="account" navigation={props.navigation} />
       ) : (
         <UserGuest title={titleGuestAccount} text={textGuestAccount} />
       );
