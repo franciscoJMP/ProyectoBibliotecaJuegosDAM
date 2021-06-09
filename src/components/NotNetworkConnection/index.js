@@ -1,6 +1,8 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 import {Icon} from 'react-native-elements';
+import {setI18nConfig} from 'ProyectoVideoJuegos/src/languages/i18n.js';
+var texts = setI18nConfig();
 
 export default function NotNetworkConnection(props) {
   return (
